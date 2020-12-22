@@ -1,0 +1,19 @@
+node_modules
+.DS_Store
+*-lock.*
+*.lock
+*.log
+
+/browser
+/node
+/types
+/coverage
+
+# Yarn
+.yarn/
+/.pnp*
+
+# Editors
+*.iml
+/.idea
+/.vscode

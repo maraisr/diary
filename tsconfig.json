@@ -1,0 +1,21 @@
+{
+	"ts-node": {
+		"transpileOnly": true,
+		"compilerOptions": {
+			"module": "commonjs",
+			"sourceMap": true
+		},
+		"include": ["test/**/*", "bench/*", "src/**/*"]
+	},
+	"extends": "@marais/tsconfig",
+	"compilerOptions": {
+		"rootDir": "src",
+		"outDir": "dist",
+		"target": "ES2019",
+		"declaration": false,
+		"removeComments": false,
+		"lib": ["DOM", "ESNext"]
+	},
+	"files": ["src/node.ts", "src/browser.ts"],
+	"exclude": ["node_modules"]
+}
