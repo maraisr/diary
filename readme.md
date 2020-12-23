@@ -1,5 +1,5 @@
 <div align="center">
-	<h1 align="center">diary</h1>
+	<h1><img src="./shots/logo.png" alt="diary"/></h1>
 	<p align="center"><code>yarn add diary</code> makes logging simple</p>
 	<hr />
 	<span>
@@ -14,8 +14,6 @@
 		</a>
 	</span>
 </div>
-
-![showcase](./shots/showcase.png)
 
 ## ⚡ Features
 
