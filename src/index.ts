@@ -1,22 +1,25 @@
 type LogFunc = (message?: string | Error, ...args: unknown[]) => void;
 type LogHook = (event: LogEvent) => LogEvent | void;
 type LogVerbs = 'error' | 'warn' | 'debug' | 'info' | 'log';
-type DiaryInstance = ReturnType<typeof diary>;
+type DiaryInstance = Record<LogVerbs, LogFunc>;
 type VerbLevels = keyof typeof verb_levels;
 type VerbLevelValues = typeof verb_levels[VerbLevels];
 
-export type LogEvent = {
+export interface LogEvent {
 	name: string;
 	level: LogVerbs;
 	message: string | Error;
 	extra: unknown[];
-};
+}
 
 const is_node = typeof process < 'u' && typeof process.stdout < 'u';
-const global_ident = {};
-const hooks = new WeakMap([[global_ident, []]]);
 const verb_levels = { f: 60, e: 50, w: 40, i: 30, d: 20, l: 10 } as const;
 const levels_symbol: Record<VerbLevels, string> = { f: '✗', e: '✗', w: '‼', i: 'ℹ', d: '●', l: '◆' } as const;
+
+const global_ident = {} as DiaryInstance;
+const hooks = new WeakMap<DiaryInstance, LogHook[]>([
+	[global_ident, []]
+]);
 
 let active_level: VerbLevelValues = verb_levels.l;
 
@@ -41,7 +44,6 @@ const logger = (name: string, hook_ref: any) => {
 		// Is this "scope" allowed to log?
 		if (!allows.some(x => x.test(name))) return;
 
-		let hook: LogHook;
 		let r: LogEvent = { name, level, message, extra };
 
 		// Handle errors specially
@@ -51,7 +53,9 @@ const logger = (name: string, hook_ref: any) => {
 		}
 
 		// Loop through all middlewares
-	for (hook of [].concat(hooks.get(hook_ref), hooks.get(global_ident))) if (!(r = hook(r))) return;
+		for (let hook of [].concat(hooks.get(hook_ref), hooks.get(global_ident))) {
+			if (!(r = hook(r))) return;
+		}
 
 		// Output
 
@@ -67,12 +71,12 @@ const logger = (name: string, hook_ref: any) => {
 
 export const middleware = (
 	handler: LogHook,
-	diary_instance: ReturnType<typeof diary> | object = global_ident,
+	diary_instance: DiaryInstance = global_ident,
 ) => {
 	hooks.get(diary_instance).push(handler);
 };
 
-export function diary(name: string): Record<LogVerbs, LogFunc> {
+export function diary(name: string): DiaryInstance {
 	const fns: DiaryInstance = { } as DiaryInstance;
 	const logger_for = logger(name, fns);
 
@@ -89,8 +93,8 @@ export function diary(name: string): Record<LogVerbs, LogFunc> {
 
 const default_diary = diary('');
 
-export const error = default_diary.error;
 export const warn = default_diary.warn;
+export const error = default_diary.error;
 export const debug = default_diary.debug;
 export const info = default_diary.info;
 export const log = default_diary.log;
