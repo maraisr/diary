@@ -37,14 +37,13 @@ const logger = (name: string, hook_ref: any) => (level: LogVerbs): LogFunc => (
 		.some(i => new RegExp(`${i.replace(/\*/g, '.*')}$`).test(name));
 	if (!parts) return;
 
-	let hook: LogHook,
-		r: LogEvent | void = { name, level, message, extra };
+		let hook: LogHook;
+		let r: LogEvent = { name, level, message, extra };
 
 	// Handle errors specially
-	if (r.level === 'error' && Object.prototype.toString.call(message) === '[object Error]') {
-		const e = (r.message as Error);
-		r.message = e.message;
-		r.extra.unshift(e);
+		if (r.level === 'error' && message instanceof Error) {
+			r.message = message.message;
+			r.extra.unshift(message);
 	}
 
 	// Loop through all middlewares
