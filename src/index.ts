@@ -67,11 +67,9 @@ function logger(name: string): DiaryInstance {
 			// Output
 			let label = '';
 			if (is_node) label = `${symbol} ${level.padEnd(6, ' ')}`;
-			if (r.name) label += `[${r.name}] `;
+			if (name) label += `[${name}] `;
 
-
-
-			(console[r.level] || console.log)(`${label}${message}`, ...r.extra);
+			(console[level] || console.log)(`${label}${message}`, ...r.extra);
 		}
 	}
 
