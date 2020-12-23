@@ -24,40 +24,45 @@ export const setLevel = (level: LogVerbs) => {
 	active_level = verb_levels[level[0] as VerbLevels];
 };
 
-const logger = (name: string, hook_ref: any) => (level: LogVerbs): LogFunc => (
-	message,
-	...extra
-) => {
-	// Check if `setLevel` prohibits processing this
-	if (!(verb_levels[level[0] as VerbLevels] >= active_level)) return;
+const toRegExp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 
-	// Next we check if `localstorage`/`env` allows this "scope" to log
-	const parts = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '')
-		.split(/[\s,]+/)
-		.some(i => new RegExp(`${i.replace(/\*/g, '.*')}$`).test(name));
-	if (!parts) return;
+const logger = (name: string, hook_ref: any) => {
+	// TODO: hoist this to global side effect? do once
+	// read `localstorage`/`env` for scope "name"s allowed to log
+	const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '').split(/[\s,]+/).map(toRegExp);
+
+	return (level: LogVerbs): LogFunc => (
+		message,
+		...extra
+	) => {
+		// Check if `setLevel` prohibits processing this
+		if (!(verb_levels[level[0] as VerbLevels] >= active_level)) return;
+
+		// Is this "scope" allowed to log?
+		if (!allows.some(x => x.test(name))) return;
 
 		let hook: LogHook;
 		let r: LogEvent = { name, level, message, extra };
 
-	// Handle errors specially
+		// Handle errors specially
 		if (r.level === 'error' && message instanceof Error) {
 			r.message = message.message;
 			r.extra.unshift(message);
-	}
+		}
 
-	// Loop through all middlewares
+		// Loop through all middlewares
 	for (hook of [].concat(hooks.get(hook_ref), hooks.get(global_ident))) if (!(r = hook(r))) return;
 
-	// Output
+		// Output
 
 		let label = '';
 		const write_fn = console[r.level] || console.log;
 
-	if (is_node) label = `${levels_symbol[r.level[0] as VerbLevels]} ${r.level.padEnd(6, ' ')}`;
-	if (r.name) label += `[${r.name}] `;
+		if (is_node) label = `${levels_symbol[r.level[0] as VerbLevels]} ${r.level.padEnd(6, ' ')}`;
+		if (r.name) label += `[${r.name}] `;
 
-	write_fn(`${label}${message}`, ...r.extra);
+		write_fn(`${label}${message}`, ...r.extra);
+	}
 };
 
 export const middleware = (
