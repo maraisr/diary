@@ -121,10 +121,12 @@ property as well as in console messages.
 A set of functions that map to `console.error`, `console.warn`, `console.debug`,
 `console.info` and `console.info`. Aptly named;
 
+- `fatal(message: string|Error, ...extra: any[])`
 - `error(message: string|Error, ...extra: any[])`
 
   If an `Error` instance is sent, the error object will be accessible through
-  the first item in the `extra`'s array in a middleware.
+  the first item in the `extra`'s array in a middleware. This is for both
+  `fatal` and `error`.
 
 - `warn(message: string, ...extra: any[])`
 - `debug(message: string, ...extra: any[])`
@@ -173,7 +175,7 @@ middleware((logEvent) => {
   return logEvent;
 });
 
-info('something informative'); // will not get logged.
+info('something informative');
 ```
 
 > This method isn't a Promise, so won't be awaited. It's a fire and forget kinda
@@ -208,7 +210,7 @@ One of the [log functions](#log-functions)'s name.
 import { setLevel, info } from 'diary';
 setLevel('error');
 
-info('something informative'); // will not get logged.
+info('something informative');
 ```
 
 </details>

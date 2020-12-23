@@ -3,7 +3,7 @@ import * as assert from 'uvu/assert';
 
 import * as diary from '../src';
 
-const verbs = ['error', 'warn', 'debug', 'info', 'log'] as const;
+const levels = ['fatal', 'error', 'warn', 'debug', 'info', 'log'] as const;
 
 const trap_console = (verb:keyof typeof console, handler: Function = () => {}) => {
 	const old = console[verb];
@@ -20,7 +20,7 @@ const reset = (test: Test) => {
 reset(test);
 
 test('api', () => {
-	[...verbs, 'diary', 'middleware'].forEach((verb) => {
+	[...levels, 'diary', 'middleware'].forEach((verb) => {
 		assert.type(
 			// @ts-expect-error
 			diary[verb],
@@ -91,7 +91,7 @@ test('setLevel', () => {
 
 test.run();
 
-verbs.forEach(verb => {
+levels.forEach(verb => {
 	const verb_test = suite(`level :: ${verb}`);
 	reset(verb_test);
 
@@ -188,4 +188,4 @@ filter('filter scope wildcard', () => {
 	infoTrap();
 });
 
-filter.run();
+//filter.run();
