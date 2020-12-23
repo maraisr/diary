@@ -52,10 +52,8 @@ const logger = (name: string, hook_ref: any) => (level: LogVerbs): LogFunc => (
 
 	// Output
 
-	let label = '',
-		write_fn = console.log;
-
-	if (!!~Object.keys(console).indexOf(r.level)) write_fn = console[r.level];
+		let label = '';
+		const write_fn = console[r.level] || console.log;
 
 	if (is_node) label = `${levels_symbol[r.level[0] as VerbLevels]} ${r.level.padEnd(6, ' ')}`;
 	if (r.name) label += `[${r.name}] `;
