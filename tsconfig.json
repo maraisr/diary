@@ -16,6 +16,6 @@
 		"removeComments": false,
 		"lib": ["DOM", "ESNext"]
 	},
-	"files": ["src/node.ts", "src/browser.ts"],
+	"files": ["src/index.ts"],
 	"exclude": ["node_modules"]
 }

@@ -1,9 +1,9 @@
-import { bgRed, white } from 'kleur';
-
 type LogFunc = (message?: string | Error, ...args: unknown[]) => void;
 type LogHook = (event: LogEvent) => LogEvent | void;
-type LogVerbs = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'trace';
+type LogVerbs = 'error' | 'warn' | 'debug' | 'info' | 'log';
 type DiaryInstance = ReturnType<typeof diary>;
+type VerbLevels = keyof typeof verb_levels;
+type VerbLevelValues = typeof verb_levels[VerbLevels];
 
 export type LogEvent = {
 	name: string;
@@ -12,69 +12,83 @@ export type LogEvent = {
 	extra: unknown[];
 };
 
-const hooks = new WeakMap();
+const is_node = typeof process < 'u' && typeof process.stdout < 'u';
+const global_ident = {};
+const hooks = new WeakMap([[global_ident, []]]);
+const verb_levels = { f: 60, e: 50, w: 40, i: 30, d: 20, l: 10 } as const;
+const levels_symbol: Record<VerbLevels, string> = { f: '✗', e: '✗', w: '‼', i: 'ℹ', d: '●', l: '◆' } as const;
 
-const verb_levels = { f: 60, e: 50, w: 40, i: 30, d: 20, t: 10 } as const;
+let active_level: VerbLevelValues = verb_levels.l;
+
+export const setLevel = (level: LogVerbs) => {
+	active_level = verb_levels[level[0] as VerbLevels];
+};
 
 const logger = (name: string, hook_ref: any) => (level: LogVerbs): LogFunc => (
 	message,
 	...extra
 ) => {
+	// Check if `setLevel` prohibits processing this
+	if (!(verb_levels[level[0] as VerbLevels] >= active_level)) return;
+
+	// Next we check if `localstorage`/`env` allows this "scope" to log
+	const parts = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '')
+		.split(/[\s,]+/)
+		.some(i => new RegExp(`${i.replace(/\*/g, '.*')}$`).test(name));
+	if (!parts) return;
+
 	let hook: LogHook,
 		r: LogEvent | void = { name, level, message, extra };
-	for (hook of hooks.get(hook_ref)) if (!(r = hook(r))) break;
+
+	// Handle errors specially
+	if (r.level === 'error' && Object.prototype.toString.call(message) === '[object Error]') {
+		const e = (r.message as Error);
+		r.message = e.message;
+		r.extra.unshift(e);
+	}
+
+	// Loop through all middlewares
+	for (hook of [].concat(hooks.get(hook_ref), hooks.get(global_ident))) if (!(r = hook(r))) return;
+
+	// Output
+
+	let label = '',
+		write_fn = console.log;
+
+	if (!!~Object.keys(console).indexOf(r.level)) write_fn = console[r.level];
+
+	if (is_node) label = `${levels_symbol[r.level[0] as VerbLevels]} ${r.level.padEnd(6, ' ')}`;
+	if (r.name) label += `[${r.name}] `;
+
+	write_fn(`${label}${message}`, ...r.extra);
 };
 
 export const middleware = (
 	handler: LogHook,
-	diary_instance: ReturnType<typeof diary> = log,
+	diary_instance: ReturnType<typeof diary> | object = global_ident,
 ) => {
-	let c_stack: any[] = hooks.get(diary_instance);
-	if (!c_stack) (c_stack = []), hooks.set(diary_instance, c_stack);
-	c_stack.unshift(handler);
+	hooks.get(diary_instance).push(handler);
 };
 
-export function diary(name: string = ''): Record<LogVerbs, LogFunc> {
-	const fns: DiaryInstance = {};
+export function diary(name: string): Record<LogVerbs, LogFunc> {
+	const fns: DiaryInstance = { } as DiaryInstance;
 	const logger_for = logger(name, fns);
 
-	fns.fatal = logger_for('fatal');
 	fns.error = logger_for('error');
 	fns.warn = logger_for('warn');
 	fns.debug = logger_for('debug');
 	fns.info = logger_for('info');
-	fns.trace = logger_for('trace');
+	fns.log = logger_for('log');
 
-	middleware((event) => {
-		const name_str = name.length > 0 ? ` ${name} ` : '';
-		let message = '',
-			label = event.level as string,
-			write_fn = console.log;
-
-		switch (event.level) {
-			case 'error':
-			case 'fatal': {
-				message =
-					event.message instanceof Error
-						? event.message.message
-						: event.message;
-				label = bgRed(white(` ${event.level} `));
-			}
-			default:
-				write_fn(`[ ${label}${name_str} ] ${message}`, ...event.extra);
-		}
-
-		return;
-	}, fns);
+	hooks.set(fns, []);
 
 	return fns;
 }
 
-export const log = diary();
+const default_diary = diary('');
 
-export const fatal = log.fatal.bind(log);
-export const error = log.error.bind(log);
-export const warn = log.warn.bind(log);
-export const debug = log.debug.bind(log);
-export const info = log.info.bind(log);
-export const trace = log.trace.bind(log);
+export const error = default_diary.error;
+export const warn = default_diary.warn;
+export const debug = default_diary.debug;
+export const info = default_diary.info;
+export const log = default_diary.log;

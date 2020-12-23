@@ -1,0 +1,49 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request: {}
+
+jobs:
+    test:
+        name: Node.js v${{ matrix.nodejs }}
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                nodejs: [10, 12, 14, 15]
+        steps:
+            - uses: actions/checkout@main
+            - uses: actions/setup-node@main
+              with:
+                  node-version: ${{ matrix.nodejs }}
+
+            - name: (env) yarn global
+              run: |-
+                  yarn global bin >> $GITHUB_PATH
+                  echo "YARN_CACHE_DIR=$(yarn cache dir)" >> $GITHUB_ENV
+
+            - name: (env) cache
+              uses: actions/cache@main
+              with:
+                  path: ${{ env.YARN_CACHE_DIR }}
+                  key:
+                      ${{ runner.os }}-node${{ matrix.nodejs }}-${{
+                      hashFiles('./package.json', './yarn.lock') }}
+
+            - name: Install
+              run: |-
+                  yarn --frozen-lockfile;
+                  yarn global add nyc;
+
+            - name: Compile
+              run: yarn build
+
+            - name: Type Check
+              run: yarn typecheck
+
+            - name: Test w/ Coverage
+              run: nyc --include=src yarn test
+
+            - name: Benchmark
+              run: yarn bench

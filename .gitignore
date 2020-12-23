@@ -8,6 +8,8 @@ node_modules
 /node
 /types
 /coverage
+/.nyc_output
+/lib
 
 # Yarn
 .yarn/

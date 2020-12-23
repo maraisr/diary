@@ -5,15 +5,15 @@ import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json';
 
 const MODULE = () => ({
-	external: [
+	external:[
 		...require('module').builtinModules,
 		...Object.keys(pkg.dependencies || {}),
-		...Object.keys(pkg.peerDependencies || {}),
+		...Object.keys(pkg.peerDependencies || {})
 	],
 	plugins: [
 		resolve({
-			extensions: ['.js', '.ts'],
-			preferBuiltins: true,
+			extensions: ['.mjs', '.js', '.ts'],
+			preferBuiltins: true
 		}),
 		typescript({}),
 	],
@@ -46,25 +46,24 @@ export default [
 		output: [
 			make(pkg['exports']['.']['import']),
 			make(pkg['exports']['.']['require']),
+			{
+				...make(pkg['exports']['.']['import']),
+				file: 'lib/index.min.mjs',
+				plugins: [terser()],
+			},
 		],
 	},
 	{
 		...MODULE(),
 		input: 'src/index.ts',
 		output: [
-			make(pkg['exports']['.']['import']),
-			make(pkg['exports']['.']['require']),
 			{
+				...make(pkg['unpkg']),
 				name: pkg.name,
 				format: 'umd',
-				file: pkg['unpkg'],
-				sourcemap: false,
-				esModule: false,
-				interop: false,
-				strict: false,
 				plugins: [terser()],
 			},
-		],
+		]
 	},
 	{
 		...TYPES(),
