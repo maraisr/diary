@@ -235,33 +235,6 @@ Benchmark
 
 > Ran with Node v15.5.0
 
-# 🧑‍🍳 Recipes
-
-<details>
-<summary>Log uncaught exceptions</summary>
-
-### _node_
-
-```ts
-import { error } from 'diary';
-
-process.on('uncaughtException', (err) => {
-  error(err);
-});
-```
-
-### _browser_
-
-```ts
-import { error } from 'diary';
-
-window.addEventListener('error', (err) => {
-  error(err);
-});
-```
-
-</details>
-
 ## License
 
 MIT © [Marais Rossouw](https://marais.io)
