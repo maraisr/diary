@@ -227,13 +227,13 @@ Validation
 ✔ winston
 
 Benchmark
-  diary      x 288,911 ops/sec ±1.55% (91 runs sampled)
-  debug      x 196,003 ops/sec ±1.18% (86 runs sampled)
-  pino       x 48,431 ops/sec ±1.25% (94 runs sampled)
-  winston    x 11,166 ops/sec ±5.87% (78 runs sampled)
+  diary      x 570,331 ops/sec ±1.35% (85 runs sampled)
+  debug      x 217,275 ops/sec ±0.88% (87 runs sampled)
+  pino       x 49,985 ops/sec ±0.85% (91 runs sampled)
+  winston    x 12,333 ops/sec ±6.44% (79 runs sampled)
 ```
 
-> Ran with Node v15.2.1
+> Ran with Node v15.5.0
 
 # 🧑‍🍳 Recipes
 
