@@ -92,7 +92,7 @@ test('setLevel', () => {
 test.run();
 
 verbs.forEach(verb => {
-	const verb_test = suite(verb);
+	const verb_test = suite(`level :: ${verb}`);
 	reset(verb_test);
 
 	verb_test('should log something', () => {
@@ -143,3 +143,49 @@ verbs.forEach(verb => {
 
 	verb_test.run();
 });
+
+const filter = suite('filter');
+
+filter('filter scope', () => {
+	const infoTrap = trap_console('info');
+	const scopeA = diary.diary('scopeA');
+	const scopeB = diary.diary('scopeB');
+
+	process.env.DEBUG = 'scopeA';
+
+	let events: any[] = [];
+	diary.middleware(logEvent => {
+		events.push(logEvent.message);
+		return logEvent;
+	});
+
+	scopeA.info('info a');
+	scopeB.info('info b');
+
+	assert.equal(events, ['info a']);
+
+	infoTrap();
+});
+
+filter('filter scope wildcard', () => {
+	const infoTrap = trap_console('info');
+	const scopeA = diary.diary('scope:a');
+	const scopeB = diary.diary('scope:b');
+
+	process.env.DEBUG = 'scope:*';
+
+	let events: any[] = [];
+	diary.middleware(logEvent => {
+		events.push(logEvent.message);
+		return logEvent;
+	});
+
+	scopeA.info('info a');
+	scopeB.info('info b');
+
+	assert.equal(events, ['info a', 'info b']);
+
+	infoTrap();
+});
+
+filter.run();
