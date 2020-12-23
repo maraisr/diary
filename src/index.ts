@@ -1,14 +1,14 @@
 type LogHook = (event: LogEvent) => LogEvent | void;
 type LogFunc = (message?: LogMessage, ...args: unknown[]) => void;
-type LogVerbs = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
-type DiaryInstance = Record<LogVerbs, LogFunc>;
+export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
+type DiaryInstance = Record<LogLevels, LogFunc>;
 type LogMessage = Error | string;
 
 type LogValues = typeof LEVELS[keyof typeof LEVELS];
 
 export interface LogEvent {
 	name: string;
-	level: LogVerbs;
+	level: LogLevels;
 	message: string | Error;
 	extra: unknown[];
 }
@@ -23,7 +23,7 @@ const hooks = new WeakMap<DiaryInstance, LogHook[]>([
 const LEVELS = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, log: 10 } as const;
 
 let active_level: LogValues = LEVELS.log;
-export const setLevel = (level: LogVerbs) => {
+export const setLevel = (level: LogLevels) => {
 	active_level = LEVELS[level];
 };
 
@@ -34,7 +34,7 @@ const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('D
 function logger(
 	ctx: DiaryInstance,
 	name: string,
-	level: LogVerbs,
+	level: LogLevels,
 	symbol: string,
 	message: LogMessage,
 	...extra: unknown[]
@@ -55,7 +55,7 @@ function logger(
 
 	// Loop through all middlewares
 	for (let hook of [].concat(hooks.get(ctx), hooks.get(global_ident))) {
-		if (!(r = hook(r))) return;
+		if (hook(r) === false) return;
 	}
 
 	// Output

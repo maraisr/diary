@@ -53,7 +53,6 @@ async function runner(candidates: Record<string, Function>) {
 			let events: any[] = [];
 			middleware((logEvent) => {
 				events.push(logEvent);
-				return logEvent;
 			}, suite);
 			suite.info('info message');
 			return events;

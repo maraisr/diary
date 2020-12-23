@@ -121,7 +121,6 @@ levels.forEach(verb => {
 		let events: any[] = [];
 		diary.middleware(logEvent => {
 			logEvent.message = 'altered';
-			return logEvent;
 		}, scope);
 		diary.middleware(logEvent => {
 			events.push(logEvent);
@@ -156,7 +155,6 @@ filter('filter scope', () => {
 	let events: any[] = [];
 	diary.middleware(logEvent => {
 		events.push(logEvent.message);
-		return logEvent;
 	});
 
 	scopeA.info('info a');
@@ -177,7 +175,6 @@ filter('filter scope wildcard', () => {
 	let events: any[] = [];
 	diary.middleware(logEvent => {
 		events.push(logEvent.message);
-		return logEvent;
 	});
 
 	scopeA.info('info a');

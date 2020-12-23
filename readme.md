@@ -37,9 +37,9 @@ yarn add diary
 import { info, diary, middleware } from 'diary';
 
 middleware((logEvent) => {
-  if (logEvent.level === 'error') Sentry.captureException(logEvent.extra[0]);
-
-  return logEvent;
+  if (logEvent.level === 'error') {
+    Sentry.captureException(logEvent.extra[0]);
+  }
 });
 
 info('this important thing happened');
@@ -140,6 +140,11 @@ node/browser's built-in formatters will format any objects etc.
 
 Returns: `void`
 
+Middlewares are function handlers that run for every
+[log function](#log-functions). They allow for modifying the log event object,
+or simply returning `false` to bailout. Executing in a _forwards_ direction,
+meaning middlewares will be run sequentially as they were defined.
+
 #### handler
 
 Type: `Function`
@@ -149,14 +154,11 @@ Which gets given a single argument of:
 ```ts
 type LogEvent = {
   name: string;
-  level: LogVerbs;
+  level: LogLevels;
   message: string | Error;
   extra: unknown[];
 };
 ```
-
-Middlewares are executed a _forwards_ direction, meaning middlewares will be run
-sequentially as they were defined.
 
 <details>
 <summary>Example</summary>
@@ -171,8 +173,6 @@ middleware((logEvent) => {
       body: JSON.stringify({ error: logEvent.extra[0] }),
     });
   }
-
-  return logEvent;
 });
 
 info('something informative');
