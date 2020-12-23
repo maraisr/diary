@@ -31,6 +31,14 @@ export const setLevel = (level: LogVerbs) => {
 const toRegExp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 
 function logger(name: string): DiaryInstance {
+	const ctx: DiaryInstance = {
+		warn: writer('warn', '‼'),
+		error: writer('error', '✗'),
+		debug: writer('debug', '●'),
+		info: writer('info', 'ℹ'),
+		log: writer('log', '◆'),
+	};
+
 	// TODO: hoist this to global side effect? do once
 	// read `localstorage`/`env` for scope "name"s allowed to log
 	const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '').split(/[\s,]+/).map(toRegExp);
@@ -52,27 +60,22 @@ function logger(name: string): DiaryInstance {
 			}
 
 			// Loop through all middlewares
-			for (let hook of [].concat(hooks.get(hook_ref), hooks.get(global_ident))) {
+			for (let hook of [].concat(hooks.get(ctx), hooks.get(global_ident))) {
 				if (!(r = hook(r))) return;
 			}
 
 			// Output
-
 			let label = '';
 			if (is_node) label = `${symbol} ${level.padEnd(6, ' ')}`;
 			if (r.name) label += `[${r.name}] `;
 
-			(console[level] || console.log)(`${label}${message}`, ...r.extra);
+
+
+			(console[r.level] || console.log)(`${label}${message}`, ...r.extra);
 		}
 	}
 
-	return {
-		warn: writer('warn', '‼'),
-		error: writer('error', '✗'),
-		debug: writer('debug', '●'),
-		info: writer('info', 'ℹ'),
-		log: writer('log', '◆'),
-	};
+	return ctx;
 };
 
 export const middleware = (
