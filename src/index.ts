@@ -1,9 +1,10 @@
 // TODO? missing "fatal" usage (60, '✗')
 
 type LogHook = (event: LogEvent) => LogEvent | void;
-type LogFunc = (message?: string | Error, ...args: unknown[]) => void;
+type LogFunc = (message?: LogMessage, ...args: unknown[]) => void;
 type LogVerbs = 'error' | 'warn' | 'debug' | 'info' | 'log';
 type DiaryInstance = Record<LogVerbs, LogFunc>;
+type LogMessage = Error | string;
 
 type LogValues = typeof LEVELS[keyof typeof LEVELS];
 
@@ -28,53 +29,44 @@ export const setLevel = (level: LogVerbs) => {
 	active_level = LEVELS[level];
 };
 
+// read `localstorage`/`env` for scope "name"s allowed to log
 const toRegExp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
+const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '').split(/[\s,]+/).map(toRegExp);
 
-function logger(name: string): DiaryInstance {
-	const ctx: DiaryInstance = {
-		warn: writer('warn', '‼'),
-		error: writer('error', '✗'),
-		debug: writer('debug', '●'),
-		info: writer('info', 'ℹ'),
-		log: writer('log', '◆'),
-	};
+function logger(
+	ctx: DiaryInstance,
+	name: string,
+	level: LogVerbs,
+	symbol: string,
+	message: LogMessage,
+	...extra: unknown[]
+): void {
+	// Check if `setLevel` prohibits processing this
+	if (LEVELS[level] < active_level) return;
 
-	// TODO: hoist this to global side effect? do once
-	// read `localstorage`/`env` for scope "name"s allowed to log
-	const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '').split(/[\s,]+/).map(toRegExp);
+	// Is this "scope" allowed to log?
+	if (!allows.some(x => x.test(name))) return;
 
-	function writer(level: LogVerbs, symbol: string): LogFunc {
-		return (message, ...extra) => {
-			// Check if `setLevel` prohibits processing this
-			if (LEVELS[level] < active_level) return;
+	let r: LogEvent = { name, level, message, extra };
 
-			// Is this "scope" allowed to log?
-			if (!allows.some(x => x.test(name))) return;
-
-			let r: LogEvent = { name, level, message, extra };
-
-			// Handle errors specially
-			if (r.level === 'error' && message instanceof Error) {
-				r.message = message.message;
-				r.extra.unshift(message);
-			}
-
-			// Loop through all middlewares
-			for (let hook of [].concat(hooks.get(ctx), hooks.get(global_ident))) {
-				if (!(r = hook(r))) return;
-			}
-
-			// Output
-			let label = '';
-			if (is_node) label = `${symbol} ${level.padEnd(6, ' ')}`;
-			if (name) label += `[${name}] `;
-
-			(console[level] || console.log)(`${label}${message}`, ...r.extra);
-		}
+	// Handle errors specially
+	if (r.level === 'error' && message instanceof Error) {
+		r.message = message.message;
+		r.extra.unshift(message);
 	}
 
-	return ctx;
-};
+	// Loop through all middlewares
+	for (let hook of [].concat(hooks.get(ctx), hooks.get(global_ident))) {
+		if (!(r = hook(r))) return;
+	}
+
+	// Output
+	let label = '';
+	if (is_node) label = `${symbol} ${level.padEnd(6, ' ')}`;
+	if (name) label += `[${name}] `;
+
+	(console[level] || console.log)(`${label}${message}`, ...r.extra);
+}
 
 export const middleware = (
 	handler: LogHook,
@@ -84,7 +76,12 @@ export const middleware = (
 };
 
 export function diary(name: string): DiaryInstance {
-	const ctx = logger(name);
+	const ctx = {} as DiaryInstance;
+	ctx.warn = logger.bind(0, ctx, name, 'warn', '‼');
+	ctx.error = logger.bind(0, ctx, name, 'error', '✗');
+	ctx.debug = logger.bind(0, ctx, name, 'debug', '●');
+	ctx.info = logger.bind(0, ctx, name, 'info', 'ℹ');
+	ctx.log = logger.bind(0, ctx, name, 'log', '◆');
 	hooks.set(ctx, []);
 	return ctx;
 }
