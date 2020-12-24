@@ -1,11 +1,13 @@
+process.env.DEBUG = 'standard';
 // @ts-ignore
-process.env.ROARR_LOG = true;
+process.env.ROARR_LOG = true; // for roarr
 
 import { Suite } from 'benchmark';
 import bunyan from 'bunyan';
 import debug from 'debug';
 import pino from 'pino';
 import roarr, { ROARR } from 'roarr';
+import ulog from 'ulog/full';
 import { equal } from 'uvu/assert';
 import winston from 'winston';
 import { diary, middleware } from '../lib';
@@ -61,6 +63,24 @@ ROARR.write = () => {};
 			middleware((logEvent) => {
 				events.push(logEvent);
 			}, suite);
+			suite.info('info message');
+			return events;
+		},
+		ulog() {
+			let events: any[] = [];
+			ulog.use([
+				{
+					outputs: {
+						custom: {
+							log(...args) {
+								events.push(args);
+							},
+						},
+					},
+				},
+			]);
+			const suite = ulog('standard');
+			suite.output = 'custom';
 			suite.info('info message');
 			return events;
 		},
