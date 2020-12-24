@@ -60,19 +60,13 @@ export default [
 				file: 'lib/index.min.mjs',
 				plugins: [terser()],
 			},
-		],
-	},
-	{
-		...MODULE(),
-		input: 'src/index.ts',
-		output: [
 			{
 				...make(pkg['unpkg']),
 				name: pkg.name,
 				format: 'umd',
 				plugins: [terser()],
 			},
-		]
+		],
 	},
 	{
 		...TYPES(),
