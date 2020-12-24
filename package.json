@@ -35,7 +35,7 @@
 		"build": "rollup -c",
 		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*}.+(ts|json|yml|md)\"",
 		"prepublishOnly": "yarn build",
-		"test": "uvu -r ts-node/register test",
+		"test": "uvu -r ts-node/register -i helpers.ts test",
 		"typecheck": "tsc --noEmit"
 	},
 	"prettier": {

@@ -9,7 +9,7 @@
 	},
 	"extends": "@marais/tsconfig",
 	"compilerOptions": {
-		"rootDir": "src",
+		"rootDir": "./",
 		"outDir": "dist",
 		"target": "ES2019",
 		"declaration": false,

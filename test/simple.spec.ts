@@ -1,21 +1,10 @@
-import { suite, Test, test } from 'uvu';
+import { suite, test } from 'uvu';
 import * as assert from 'uvu/assert';
 
 import * as diary from '../src';
+import { reset, trap_console } from './helpers';
 
 const levels = ['fatal', 'error', 'warn', 'debug', 'info', 'log'] as const;
-
-const trap_console = (verb:keyof typeof console, handler: Function = () => {}) => {
-	const old = console[verb];
-	console[verb] = handler;
-	return () => console[verb] = old;
-}
-
-const reset = (test: Test) => {
-	test.after(() => {
-		diary.setLevel('log');
-	});
-};
 
 reset(test);
 
@@ -60,12 +49,14 @@ test('default is unnamed', () => {
 test('#error should have stack as extra', () => {
 	const scope = diary.diary('error');
 	let events: any[] = [];
+	const trap = trap_console('error');
 	diary.middleware(logEvent => {
 		events.push(logEvent);
 	}, scope);
 	scope.error(new Error('some error'));
 	assert.equal(events[0].message, 'some error');
 	assert.instance(events[0].extra[0], Error);
+	trap();
 });
 
 test('setLevel', () => {
@@ -91,33 +82,42 @@ test('setLevel', () => {
 
 test.run();
 
-levels.forEach(verb => {
-	const verb_test = suite(`level :: ${verb}`);
-	reset(verb_test);
+levels.forEach(level => {
+	const level_test = suite(`level :: ${level}`);
+	reset(level_test);
 
-	verb_test('should log something', () => {
-		const scope = diary.diary(verb);
+	let trap:Function;
+	level_test.before(() => {
+		trap = trap_console(level as any);
+	});
+
+	level_test.after(() => {
+		trap();
+	});
+
+	level_test('should log something', () => {
+		const scope = diary.diary(level);
 		let events: any[] = [];
 		diary.middleware(logEvent => {
 			events.push(logEvent);
 		}, scope);
-		scope[verb]('something');
-		scope[verb]('something else');
+		scope[level]('something');
+		scope[level]('something else');
 		assert.equal(events, [{
-			name: verb,
-			level: verb,
+			name: level,
+			level: level,
 			message: 'something',
 			extra: [],
 		}, {
-			name: verb,
-			level: verb,
+			name: level,
+			level: level,
 			message: 'something else',
 			extra: [],
 		}]);
 	});
 
-	verb_test('should allow middleware to alter message', () => {
-		const scope = diary.diary(verb);
+	level_test('should allow middleware to alter message', () => {
+		const scope = diary.diary(level);
 		let events: any[] = [];
 		diary.middleware(logEvent => {
 			logEvent.message = 'altered';
@@ -125,22 +125,22 @@ levels.forEach(verb => {
 		diary.middleware(logEvent => {
 			events.push(logEvent);
 		}, scope);
-		scope[verb]('something');
-		scope[verb]('something else');
+		scope[level]('something');
+		scope[level]('something else');
 		assert.equal(events, [{
-			name: verb,
-			level: verb,
+			name: level,
+			level: level,
 			message: 'altered',
 			extra: [],
 		}, {
-			name: verb,
-			level: verb,
+			name: level,
+			level: level,
 			message: 'altered',
 			extra: [],
 		}]);
 	});
 
-	verb_test.run();
+	level_test.run();
 });
 
 const filter = suite('filter');
