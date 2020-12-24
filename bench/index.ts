@@ -1,9 +1,14 @@
+// @ts-ignore
+process.env.ROARR_LOG = true;
+
 import { Suite } from 'benchmark';
-import { equal } from 'uvu/assert';
-import { diary, middleware } from '../lib';
+import bunyan from 'bunyan';
 import debug from 'debug';
 import pino from 'pino';
+import roarr, { ROARR } from 'roarr';
+import { equal } from 'uvu/assert';
 import winston from 'winston';
+import { diary, middleware } from '../lib';
 
 const trap_console = (verb: keyof typeof console) => {
 	const old = console[verb];
@@ -46,6 +51,8 @@ async function runner(candidates: Record<string, Function>) {
 	});
 }
 
+ROARR.write = () => {};
+
 (async function () {
 	await runner({
 		diary() {
@@ -54,6 +61,27 @@ async function runner(candidates: Record<string, Function>) {
 			middleware((logEvent) => {
 				events.push(logEvent);
 			}, suite);
+			suite.info('info message');
+			return events;
+		},
+		roarr() {
+			let events: any[] = [];
+			const suite = roarr.child((message) => {
+				events.push(message);
+			});
+			suite.info('info message');
+			return events;
+		},
+		bunyan() {
+			let events: any[] = [];
+			const suite = bunyan.createLogger({
+				name: 'standard',
+				stream: {
+					write(message) {
+						events.push(message);
+					},
+				},
+			});
 			suite.info('info message');
 			return events;
 		},

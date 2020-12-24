@@ -220,15 +220,19 @@ info('something informative');
 ```
 Validation
 ✔ diary
+✔ roarr
+✔ bunyan
 ✔ debug
 ✔ pino
 ✔ winston
 
 Benchmark
-  diary      x 570,331 ops/sec ±1.35% (85 runs sampled)
-  debug      x 217,275 ops/sec ±0.88% (87 runs sampled)
-  pino       x 49,985 ops/sec ±0.85% (91 runs sampled)
-  winston    x 12,333 ops/sec ±6.44% (79 runs sampled)
+  diary      x 643,786 ops/sec ±1.77% (89 runs sampled)
+  roarr      x 399,287 ops/sec ±0.70% (94 runs sampled)
+  bunyan     x 16,317 ops/sec ±1.09% (93 runs sampled)
+  debug      x 34,998 ops/sec ±1.19% (90 runs sampled)
+  pino       x 46,741 ops/sec ±0.86% (94 runs sampled)
+  winston    x 13,213 ops/sec ±3.23% (85 runs sampled)
 ```
 
 > Ran with Node v15.5.0
