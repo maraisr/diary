@@ -1,6 +1,7 @@
+import filesize from 'rollup-plugin-filesize';
 import resolve from '@rollup/plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript2';
 import types from 'rollup-plugin-dts';
+import typescript from 'rollup-plugin-typescript2';
 import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json';
 
@@ -16,6 +17,14 @@ const MODULE = () => ({
 			preferBuiltins: true
 		}),
 		typescript({}),
+		filesize({
+			showBrotliSize: true,
+			reporter: [
+				(options, bundle, {minSize, gzipSize, brotliSize, fileName}) => {
+					console.log(`${fileName} ↠ ${minSize} (min) ~ ${gzipSize} (gzip) ~ ${brotliSize} (brotli)`)
+				}
+			]
+		})
 	],
 });
 
