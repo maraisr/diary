@@ -150,12 +150,12 @@ Type: `Function`
 Which gets given a single argument of:
 
 ```ts
-type LogEvent = {
+interface LogEvent {
   name: string;
   level: LogLevels;
-  message: string | Error;
+  message: string;
   extra: unknown[];
-};
+}
 ```
 
 <details>
