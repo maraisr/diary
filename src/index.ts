@@ -3,7 +3,7 @@ type LogFunc = (message?: string, ...args: unknown[]) => void;
 type LogFuncWithError = (message?: string | Error, ...args: unknown[]) => void;
 export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
 type ErrorLevels = Extract<LogLevels, 'fatal' | 'error'>;
-type DiaryInstance = Record<Exclude<LogLevels, ErrorLevels>, LogFunc> & Record<ErrorLevels, LogFuncWithError>;
+export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFunc> & Record<ErrorLevels, LogFuncWithError>;
 
 type LogValues = typeof LEVELS[keyof typeof LEVELS];
 
@@ -16,8 +16,8 @@ export interface LogEvent {
 
 const is_node = typeof process < 'u' && typeof process.stdout < 'u';
 
-const global_ident = {} as DiaryInstance;
-const hooks = new WeakMap<DiaryInstance, LogHook[]>([
+const global_ident = {} as Diary;
+const hooks = new WeakMap<Diary, LogHook[]>([
 	[global_ident, []]
 ]);
 
@@ -33,7 +33,7 @@ const toRegExp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '').split(/[\s,]+/).map(toRegExp);
 
 function logger(
-	ctx: DiaryInstance,
+	ctx: Diary,
 	name: string,
 	level: LogLevels,
 	symbol: string,
@@ -71,13 +71,13 @@ function logger(
 
 export const middleware = (
 	handler: LogHook,
-	diary_instance: DiaryInstance = global_ident,
+	diary_instance: Diary = global_ident,
 ) => {
 	hooks.get(diary_instance).push(handler);
 };
 
-export function diary(name: string): DiaryInstance {
-	const ctx = {} as DiaryInstance;
+export function diary(name: string): Diary {
+	const ctx = {} as Diary;
 	ctx.fatal = logger.bind(0, ctx, name, 'fatal', '✗');
 	ctx.error = logger.bind(0, ctx, name, 'error', '✗');
 	ctx.warn = logger.bind(0, ctx, name, 'warn', '‼');
