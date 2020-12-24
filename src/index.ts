@@ -1,15 +1,16 @@
-type LogHook = (event: LogEvent) => LogEvent | void;
-type LogFunc = (message?: LogMessage, ...args: unknown[]) => void;
+type LogHook = (event: LogEvent) => void | false;
+type LogFunc = (message?: string, ...args: unknown[]) => void;
+type LogFuncWithError = (message?: string | Error, ...args: unknown[]) => void;
 export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
-type DiaryInstance = Record<LogLevels, LogFunc>;
-type LogMessage = Error | string;
+type ErrorLevels = Extract<LogLevels, 'fatal' | 'error'>;
+type DiaryInstance = Record<Exclude<LogLevels, ErrorLevels>, LogFunc> & Record<ErrorLevels, LogFuncWithError>;
 
 type LogValues = typeof LEVELS[keyof typeof LEVELS];
 
 export interface LogEvent {
 	name: string;
 	level: LogLevels;
-	message: string | Error;
+	message: string;
 	extra: unknown[];
 }
 
@@ -36,7 +37,7 @@ function logger(
 	name: string,
 	level: LogLevels,
 	symbol: string,
-	message: LogMessage,
+	message: Error | string,
 	...extra: unknown[]
 ): void {
 	// Check if `setLevel` prohibits processing this
@@ -45,13 +46,14 @@ function logger(
 	// Is this "scope" allowed to log?
 	if (!allows.some(x => x.test(name))) return;
 
-	let r: LogEvent = { name, level, message, extra };
-
 	// Handle errors specially
-	if ((r.level === 'error' || r.level === 'fatal') && message instanceof Error) {
-		r.message = message.message;
-		r.extra.unshift(message);
+	if ((level === 'error' || level === 'fatal') && message instanceof Error) {
+		extra.unshift(message);
+		message = message.message;
 	}
+
+	// @ts-expect-error come on TypeScript, I've just made it a string...
+	let r: LogEvent = { name, level, message, extra };
 
 	// Loop through all middlewares
 	for (let hook of [].concat(hooks.get(ctx), hooks.get(global_ident))) {
@@ -64,7 +66,7 @@ function logger(
 	if (name) label += `[${name}] `;
 
 	if (level === 'fatal') level = 'error';
-	(console[level] || console.log)(`${label}${message}`, ...r.extra);
+	(console[level] || console.log)(`${label}${r.message}`, ...r.extra);
 }
 
 export const middleware = (
