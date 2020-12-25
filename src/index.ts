@@ -16,9 +16,9 @@ export interface LogEvent {
 
 const is_node = typeof process < 'u' && typeof process.stdout < 'u';
 
-const global_ident = {} as Diary;
+const global_ctx = {} as Diary;
 const hooks = new WeakMap<Diary, LogHook[]>([
-	[global_ident, []]
+	[global_ctx, []],
 ]);
 
 const LEVELS = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, log: 10 } as const;
@@ -40,44 +40,42 @@ function logger(
 	message: Error | string,
 	...extra: unknown[]
 ): void {
-	// Check if `setLevel` prohibits processing this
+	// check if `setLevel` prohibits processing this
 	if (LEVELS[level] < active_level) return;
 
-	// Is this "scope" allowed to log?
-	if (!allows.some(x => x.test(name))) return;
+	// is this "scope" allowed to log?
+	for (let i = 0; i < allows.length; i++) if (allows[i].test(name)) break; else return;
 
-	// Handle errors specially
+	// handle errors specially
 	if ((level === 'error' || level === 'fatal') && message instanceof Error) {
 		extra.unshift(message);
 		message = message.message;
 	}
 
-	// @ts-expect-error come on TypeScript, I've just made it a string...
+	// @ts-expect-error come on TypeScript, I've just `message` a string...
 	let r: LogEvent = { name, level, message, extra };
 
-	// Loop through all middlewares
-	let hook_arr = hooks.get(ctx);
-	for (let i = 0; i < hook_arr.length; i++) if (hook_arr[i](r) === false) return;
-	hook_arr = hooks.get(global_ident);
-	for (let i = 0; i < hook_arr.length; i++) if (hook_arr[i](r) === false) return;
+	// loop through all middlewares
+	let _hooks = hooks.get(ctx);
+	for (let i = 0; i < _hooks.length; i++) if (_hooks[i](r) === false) return;
+	_hooks = hooks.get(global_ctx);
+	for (let i = 0; i < _hooks.length; i++) if (_hooks[i](r) === false) return;
 
-	// Output
+	// output
 	let label = '';
 	if (is_node) label = `${symbol} ${level.padEnd(6, ' ')}`;
 	if (name) label += `[${name}] `;
 
-	if (level === 'fatal') level = 'error';
+	if (level === 'fatal') level = 'error'; // there is no `console.fatal`
 	(console[level] || console.log)(`${label}${r.message}`, ...r.extra);
 }
 
 export const middleware = (
 	handler: LogHook,
-	diary_instance: Diary = global_ident,
-) => {
-	const idx = hooks.get(diary_instance).push(handler);
-	return () => {
-		hooks.get(diary_instance).splice(idx-1, 1);
-	}
+	ctx: Diary = global_ctx,
+): VoidFunction => {
+	const _hooks = hooks.get(ctx);
+	return _hooks.splice.bind(_hooks, _hooks.push(handler) - 1, 1);
 };
 
 export function diary(name: string): Diary {
