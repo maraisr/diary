@@ -231,13 +231,13 @@ Validation
 ✔ winston
 
 Benchmark
-  diary      x 645,535 ops/sec ±1.48% (88 runs sampled)
-  ulog       x 22,814 ops/sec ±48.31% (8 runs sampled)
-  roarr      x 425,260 ops/sec ±1.71% (92 runs sampled)
-  bunyan     x 16,344 ops/sec ±0.83% (94 runs sampled)
-  debug      x 34,541 ops/sec ±1.18% (91 runs sampled)
-  pino       x 47,025 ops/sec ±1.75% (97 runs sampled)
-  winston    x 13,076 ops/sec ±3.23% (89 runs sampled)
+  diary      x 788,373 ops/sec ±1.41% (87 runs sampled)
+  ulog       x 24,596 ops/sec ±40.49% (10 runs sampled)
+  roarr      x 1,222,889 ops/sec ±0.29% (94 runs sampled)
+  bunyan     x 16,506 ops/sec ±0.76% (94 runs sampled)
+  debug      x 35,378 ops/sec ±1.05% (91 runs sampled)
+  pino       x 47,708 ops/sec ±1.44% (92 runs sampled)
+  winston    x 13,436 ops/sec ±2.45% (84 runs sampled)
 ```
 
 > Ran with Node v15.5.0
