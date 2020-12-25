@@ -10,7 +10,7 @@ import roarr, { ROARR } from 'roarr';
 import ulog from 'ulog/full';
 import { equal } from 'uvu/assert';
 import winston from 'winston';
-import { diary, middleware } from '../lib';
+import { diary, middleware } from '../src';
 
 const trap_console = (verb: keyof typeof console) => {
 	const old = console[verb];

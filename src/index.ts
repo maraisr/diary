@@ -56,9 +56,10 @@ function logger(
 	let r: LogEvent = { name, level, message, extra };
 
 	// Loop through all middlewares
-	for (let hook of [].concat(hooks.get(ctx), hooks.get(global_ident))) {
-		if (hook(r) === false) return;
-	}
+	let hook_arr = hooks.get(ctx);
+	for (let i = 0; i < hook_arr.length; i++) if (hook_arr[i](r) === false) return;
+	hook_arr = hooks.get(global_ident);
+	for (let i = 0; i < hook_arr.length; i++) if (hook_arr[i](r) === false) return;
 
 	// Output
 	let label = '';
