@@ -136,12 +136,15 @@ node/browser's built-in formatters will format any objects etc.
 
 ## middleware(callback: function, diary?: Diary)
 
-Returns: `void`
+Returns: `Dispose`
 
 Middlewares are function handlers that run for every
 [log function](#log-functions). They allow for modifying the log event object,
 or simply returning `false` to bailout. Executing in a _forwards_ direction,
 meaning middlewares will be run sequentially as they were defined.
+
+When the return is called, it will remove the middleware from the diary
+instance.
 
 #### handler
 

@@ -73,7 +73,10 @@ export const middleware = (
 	handler: LogHook,
 	diary_instance: Diary = global_ident,
 ) => {
-	hooks.get(diary_instance).push(handler);
+	const idx = hooks.get(diary_instance).push(handler);
+	return () => {
+		hooks.get(diary_instance).splice(idx-1, 1);
+	}
 };
 
 export function diary(name: string): Diary {

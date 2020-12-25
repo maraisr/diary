@@ -59,6 +59,23 @@ test('#error should have stack as extra', () => {
 	trap();
 });
 
+test('middleware should allow cleanup', () => {
+	const trap = trap_console('info');
+	const scope = diary.diary('');
+	const called = { a: 0, b: 0 };
+	const a = diary.middleware(() => {
+		++called.a;
+	}, scope);
+	diary.middleware(() => {
+		++called.b;
+	}, scope);
+	scope.info('info a');
+	a();
+	scope.info('info b');
+	assert.equal(called, { a: 1, b: 2 });
+	trap();
+});
+
 test('setLevel', () => {
 	const infoTrap = trap_console('info');
 	const errorTrap = trap_console('error');
@@ -78,7 +95,7 @@ test('setLevel', () => {
 
 	infoTrap();
 	errorTrap();
-})
+});
 
 test.run();
 
@@ -86,7 +103,7 @@ levels.forEach(level => {
 	const level_test = suite(`level :: ${level}`);
 	reset(level_test);
 
-	let trap:Function;
+	let trap: Function;
 	level_test.before(() => {
 		trap = trap_console(level as any);
 	});
