@@ -88,6 +88,7 @@ ROARR.write = () => {};
 			let events: any[] = [];
 			const suite = roarr.child((message) => {
 				events.push(message);
+				return message;
 			});
 			suite.info('info message');
 			return events;
