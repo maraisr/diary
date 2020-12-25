@@ -53,7 +53,8 @@ async function runner(candidates: Record<string, Function>) {
 	});
 }
 
-ROARR.write = () => {};
+// @ts-ignore
+global.ROARR.write = ROARR.write = () => {};
 
 (async function () {
 	await runner({
@@ -88,6 +89,7 @@ ROARR.write = () => {};
 			let events: any[] = [];
 			const suite = roarr.child((message) => {
 				events.push(message);
+				return message;
 			});
 			suite.info('info message');
 			return events;
