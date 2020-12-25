@@ -53,7 +53,8 @@ async function runner(candidates: Record<string, Function>) {
 	});
 }
 
-ROARR.write = () => {};
+// @ts-ignore
+global.ROARR.write = ROARR.write = () => {};
 
 (async function () {
 	await runner({
