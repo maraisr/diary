@@ -36,7 +36,7 @@ function logger(
 	ctx: Diary,
 	name: string,
 	level: LogLevels,
-	symbol: string,
+	symbol_label: string,
 	message: Error | string,
 	...extra: unknown[]
 ): void {
@@ -63,7 +63,7 @@ function logger(
 
 	// output
 	let label = '';
-	if (is_node) label = `${symbol} ${level.padEnd(6, ' ')}`;
+	if (is_node) label = `${symbol_label} `;
 	if (name) label += `[${name}] `;
 
 	if (level === 'fatal') level = 'error'; // there is no `console.fatal`
@@ -80,12 +80,12 @@ export const middleware = (
 
 export function diary(name: string): Diary {
 	const ctx = {} as Diary;
-	ctx.fatal = logger.bind(0, ctx, name, 'fatal', '✗');
-	ctx.error = logger.bind(0, ctx, name, 'error', '✗');
-	ctx.warn = logger.bind(0, ctx, name, 'warn', '‼');
-	ctx.debug = logger.bind(0, ctx, name, 'debug', '●');
-	ctx.info = logger.bind(0, ctx, name, 'info', 'ℹ');
-	ctx.log = logger.bind(0, ctx, name, 'log', '◆');
+	ctx.fatal = logger.bind(0, ctx, name, 'fatal', '✗ fatal');
+	ctx.error = logger.bind(0, ctx, name, 'error', '✗ error');
+	ctx.warn = logger.bind(0, ctx, name, 'warn', '‼ warn ');
+	ctx.debug = logger.bind(0, ctx, name, 'debug', '● debug');
+	ctx.info = logger.bind(0, ctx, name, 'info', 'ℹ info ');
+	ctx.log = logger.bind(0, ctx, name, 'log', '◆ log  ');
 	hooks.set(ctx, []);
 	return ctx;
 }
