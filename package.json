@@ -15,6 +15,7 @@
 		"email": "me@marais.dev",
 		"url": "https://marais.io"
 	},
+	"sideEffects": false,
 	"exports": {
 		".": {
 			"import": "./lib/index.mjs",

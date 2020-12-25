@@ -7,7 +7,7 @@
 			<img src="https://github.com/maraisr/diary/workflows/CI/badge.svg?query=branch:main"/>
 		</a>
 		<a href="https://npm.im/diary">
-			<img src="https://img.shields.io/npm/dm/diary" alt="downloads"/>
+			<img src="https://badgen.net/npm/dm/diary" alt="downloads"/>
 		</a>
 		<a href="https://bundlephobia.com/result?p=diary">
 			<img src="https://badgen.net/bundlephobia/minzip/diary" alt="size"/>
