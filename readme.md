@@ -6,7 +6,7 @@
 		<a href="https://github.com/maraisr/diary/actions?query=workflow:CI+branch:main">
 			<img src="https://github.com/maraisr/diary/workflows/CI/badge.svg?query=branch:main"/>
 		</a>
-		<a href="https://npm.im/diary">
+		<a href="https://npm-stat.com/charts.html?package=diary">
 			<img src="https://badgen.net/npm/dm/diary" alt="downloads"/>
 		</a>
 		<a href="https://bundlephobia.com/result?p=diary">
