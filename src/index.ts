@@ -54,7 +54,7 @@ function logger(
 		message = message.message;
 	}
 
-	// @ts-expect-error come on TypeScript, I've just `message` a string...
+	// @ts-expect-error come on TypeScript, I've just made `message` a string...
 	let r: LogEvent = { name, level, message, extra };
 
 	// loop through all middlewares
@@ -74,6 +74,23 @@ function logger(
 	(console[level] || console.log)(`${label}${r.message}`, ...r.extra);
 }
 
+/**
+ * Creates a new diary logging instance.
+ *
+ * Note: Giving this the same name as a previous diary instance will not inherit it's middleware.
+ *
+ * @example
+ * ```ts
+ * import { diary } from 'diary';
+ *
+ * const log = diary('my-fancy-app');
+ *
+ * log.info('app has started');
+ * ```
+ *
+ * @param name A name to give this diary instance this can be unique to your application, or not. When logged, it'll
+ *     exist after the level string, eg: `ℹ info [my-fancy-app] app has started`
+ */
 export function diary(name: string): Diary {
 	const ctx = {} as Diary,
 		_hooks: HookPhases = { before: [], after: [] };
@@ -90,13 +107,69 @@ export function diary(name: string): Diary {
 const middleware = (
 	phase: keyof HookPhases,
 	handler: HookFn,
-	ctx?: Diary,
+	context?: Diary,
 ) => {
-	const _hooks = (ctx ? hooks.get(ctx) : global_hooks)[phase];
+	const _hooks = (context ? hooks.get(context) : global_hooks)[phase];
 	return _hooks.splice.bind(_hooks, _hooks.push(handler) - 1, 1);
 };
 
+/**
+ * Middleware that's run's during the _before_ phase of middleware. When **NOT** passing the optional 2nd param
+ * `context`, this middleware will be added to the _global_ stack, and ran before _all_ diaries.
+ *
+ * Middleware are ran with this sequence:
+ * global before -> diary before -> diary after -> global after
+ *
+ * @example
+ * ```ts
+ * import { diary, info, before } from 'diary';
+ *
+ * const log = diary('scoped');
+ * before(event => {
+ *    event.context = {
+ *        domainName: 'diary.com'
+ *    };
+ * });
+ * before(event => {
+ *     event.context.scopedValue = '✨';
+ * }, log);
+ *
+ * info('info message'); // will have the context, but no sparkles.
+ * log.info('second info message'); // will have the context as well as the sparkles.
+ * ```
+ *
+ * @returns VoidFunction disposing this middleware from running any further.
+ */
 export const before:MiddlewareFn = middleware.bind(0, 'before');
+/**
+ * Middleware that's run's during the _after_ phase of middleware. When **NOT** passing the optional 2nd param
+ * `context`, this middleware will be added to the _global_ stack, and ran after _all_ diaries.
+ *
+ * Middleware are ran with this sequence:
+ * global before -> diary before -> diary after -> global after
+ *
+ * @example
+ * ```ts
+ * import { diary, info, after } from 'diary';
+ *
+ * const log = diary('scoped');
+ * after(event => {
+ *    fetch('/api/logger', {
+ *        method: 'POST',
+ *        body: JSON.stringify(event);
+ *    });
+ * });
+ * after(event => {
+ *    // Assuming you have the {@link before} defined above.
+ *    event.message = `${event.context.domain} ${event.message}`;
+ * }, log);
+ *
+ * info('info message'); // will just post
+ * log.info('second info message'); // will post after the message was  altered.
+ * ```
+ *
+ * @returns VoidFunction disposing this middleware from running any further.
+ */
 export const after:MiddlewareFn = middleware.bind(0, 'after');
 
 export const fatal = default_diary.fatal;
