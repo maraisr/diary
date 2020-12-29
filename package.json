@@ -1,12 +1,12 @@
 {
 	"name": "diary",
 	"version": "0.0.9",
-	"description": "Dear diary, fixed a bug today — glad I had logs!",
+	"description": "Fast logging library for both Node and Browser.",
 	"keywords": [
 		"fast",
 		"logging",
-		"logger",
-		"utility"
+		"utility",
+		"middleware"
 	],
 	"repository": "maraisr/diary",
 	"license": "MIT",

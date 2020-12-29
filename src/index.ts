@@ -1,9 +1,11 @@
-type LogHook = (event: LogEvent) => void | false;
-type LogFunc = (message?: string, ...args: unknown[]) => void;
-type LogFuncWithError = (message?: string | Error, ...args: unknown[]) => void;
+type HookFn = (event: LogEvent) => void | false;
+type HookPhases = { before: HookFn[], after: HookFn[] };
+type MiddlewareFn = (handler: HookFn, context?: Diary)=> VoidFunction;
+type LogFn = (message?: string, ...args: unknown[]) => void;
+type LogFnAsError = (message?: string | Error, ...args: unknown[]) => void;
 export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
 type ErrorLevels = Extract<LogLevels, 'fatal' | 'error'>;
-export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFunc> & Record<ErrorLevels, LogFuncWithError>;
+export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFn> & Record<ErrorLevels, LogFnAsError>;
 
 type LogValues = typeof LEVELS[keyof typeof LEVELS];
 
@@ -12,27 +14,28 @@ export interface LogEvent {
 	level: LogLevels;
 	message: string;
 	extra: unknown[];
+	[other: string]: any;
 }
 
 const is_node = typeof process < 'u' && typeof process.stdout < 'u';
 
-const hooks = new WeakMap<Diary, LogHook[]>();
-
 const LEVELS = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, log: 10 } as const;
 
 let active_level: LogValues = LEVELS.log;
-export const setLevel = (level: LogLevels) => {
+export function setLevel(level: LogLevels): void {
 	active_level = LEVELS[level];
-};
+}
 
 // read `localstorage`/`env` for scope "name"s allowed to log
 const toRegExp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '').split(/[\s,]+/).map(toRegExp);
 
-const default_diary = diary('');
+const hooks = new WeakMap<Diary, HookPhases>(),
+	default_diary = diary(''),
+	global_hooks = hooks.get(default_diary);
 
 function logger(
-	ctx: Diary,
+	c_hooks: HookPhases,
 	name: string,
 	level: LogLevels,
 	symbol_label: string,
@@ -55,10 +58,12 @@ function logger(
 	let r: LogEvent = { name, level, message, extra };
 
 	// loop through all middlewares
-	let _hooks = hooks.get(ctx);
-	for (let i = 0; i < _hooks.length; i++) if (_hooks[i](r) === false) return;
-	_hooks = hooks.get(default_diary);
-	for (let i = 0; i < _hooks.length; i++) if (_hooks[i](r) === false) return;
+	let i = 0, j = 0, len = 0, arr, seq = [global_hooks.before, c_hooks.before, c_hooks.after, global_hooks.after];
+	for (; i < seq.length; i++) {
+		for (j = 0, arr = seq[i], len = arr.length; j < len;) {
+			if (arr[j++](r) === false) return;
+		}
+	}
 
 	// output
 	let label = '';
@@ -69,25 +74,30 @@ function logger(
 	(console[level] || console.log)(`${label}${r.message}`, ...r.extra);
 }
 
-export const middleware = (
-	handler: LogHook,
-	ctx: Diary = default_diary,
-): VoidFunction => {
-	const _hooks = hooks.get(ctx);
+export function diary(name: string): Diary {
+	const ctx = {} as Diary,
+		_hooks: HookPhases = { before: [], after: [] };
+	ctx.fatal = logger.bind(0, _hooks, name, 'fatal', '✗ fatal');
+	ctx.error = logger.bind(0, _hooks, name, 'error', '✗ error');
+	ctx.warn = logger.bind(0, _hooks, name, 'warn', '‼ warn ');
+	ctx.debug = logger.bind(0, _hooks, name, 'debug', '● debug');
+	ctx.info = logger.bind(0, _hooks, name, 'info', 'ℹ info ');
+	ctx.log = logger.bind(0, _hooks, name, 'log', '◆ log  ');
+	hooks.set(ctx, _hooks);
+	return ctx;
+}
+
+const middleware = (
+	phase: keyof HookPhases,
+	handler: HookFn,
+	ctx?: Diary,
+) => {
+	const _hooks = (ctx ? hooks.get(ctx) : global_hooks)[phase];
 	return _hooks.splice.bind(_hooks, _hooks.push(handler) - 1, 1);
 };
 
-export function diary(name: string): Diary {
-	const ctx = {} as Diary;
-	ctx.fatal = logger.bind(0, ctx, name, 'fatal', '✗ fatal');
-	ctx.error = logger.bind(0, ctx, name, 'error', '✗ error');
-	ctx.warn = logger.bind(0, ctx, name, 'warn', '‼ warn ');
-	ctx.debug = logger.bind(0, ctx, name, 'debug', '● debug');
-	ctx.info = logger.bind(0, ctx, name, 'info', 'ℹ info ');
-	ctx.log = logger.bind(0, ctx, name, 'log', '◆ log  ');
-	hooks.set(ctx, []);
-	return ctx;
-}
+export const before:MiddlewareFn = middleware.bind(0, 'before');
+export const after:MiddlewareFn = middleware.bind(0, 'after');
 
 export const fatal = default_diary.fatal;
 export const error = default_diary.error;

@@ -10,7 +10,7 @@ import roarr, { ROARR } from 'roarr';
 import ulog from 'ulog/full';
 import { equal } from 'uvu/assert';
 import winston from 'winston';
-import { diary, middleware } from '../src';
+import { diary, after } from '../src';
 
 const trap_console = (verb: keyof typeof console) => {
 	const old = console[verb];
@@ -61,7 +61,7 @@ global.ROARR.write = ROARR.write = () => {};
 		diary() {
 			const suite = diary('standard');
 			let events: any[] = [];
-			middleware((logEvent) => {
+			after((logEvent) => {
 				events.push(logEvent);
 			}, suite);
 			suite.info('info message');

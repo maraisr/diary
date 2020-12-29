@@ -9,7 +9,7 @@ const levels = ['fatal', 'error', 'warn', 'debug', 'info', 'log'] as const;
 reset(test);
 
 test('api', () => {
-	[...levels, 'diary', 'middleware'].forEach((verb) => {
+	[...levels, 'diary', 'before', 'after'].forEach((verb) => {
 		assert.type(
 			// @ts-expect-error
 			diary[verb],
@@ -24,7 +24,7 @@ test('should now share middleware between scopes', () => {
 	const scopeA = diary.diary('scopeA');
 	const scopeB = diary.diary('scopeB');
 	const who_ran = { scopeA: 0, scopeB: 0 };
-	diary.middleware(({ name }) => {
+	diary.after(({ name }) => {
 		// @ts-expect-error
 		++who_ran[name];
 	}, scopeA);
@@ -50,7 +50,7 @@ test('#error should have stack as extra', () => {
 	const scope = diary.diary('error');
 	let events: any[] = [];
 	const trap = trap_console('error');
-	diary.middleware(logEvent => {
+	diary.after(logEvent => {
 		events.push(logEvent);
 	}, scope);
 	scope.error(new Error('some error'));
@@ -63,10 +63,10 @@ test('middleware should allow cleanup', () => {
 	const trap = trap_console('info');
 	const scope = diary.diary('');
 	const called = { a: 0, b: 0 };
-	const a = diary.middleware(() => {
+	const a = diary.after(() => {
 		++called.a;
 	}, scope);
-	diary.middleware(() => {
+	diary.after(() => {
 		++called.b;
 	}, scope);
 	scope.info('info a');
@@ -81,10 +81,10 @@ test('should inherit global middleware', () => {
 	const scope = diary.diary('scoped');
 	const ran = {global: 0, scoped: 0};
 	const cleanups = [
-		diary.middleware(() => {
+		diary.after(() => {
 			++ran.global;
 		}),
-		diary.middleware(() => {
+		diary.after(() => {
 			++ran.scoped;
 		}, scope)
 	];
@@ -100,7 +100,7 @@ test('setLevel', () => {
 	const errorTrap = trap_console('error');
 	const scope = diary.diary('level');
 	let events: any[] = [];
-	diary.middleware(logEvent => {
+	diary.after(logEvent => {
 		events.push(logEvent);
 	}, scope);
 	scope.info('info a');
@@ -134,7 +134,7 @@ levels.forEach(level => {
 	level_test('should log something', () => {
 		const scope = diary.diary(level);
 		let events: any[] = [];
-		diary.middleware(logEvent => {
+		diary.after(logEvent => {
 			events.push(logEvent);
 		}, scope);
 		scope[level]('something');
@@ -155,10 +155,10 @@ levels.forEach(level => {
 	level_test('should allow middleware to alter message', () => {
 		const scope = diary.diary(level);
 		let events: any[] = [];
-		diary.middleware(logEvent => {
+		diary.after(logEvent => {
 			logEvent.message = 'altered';
 		}, scope);
-		diary.middleware(logEvent => {
+		diary.after(logEvent => {
 			events.push(logEvent);
 		}, scope);
 		scope[level]('something');
@@ -189,7 +189,7 @@ filter('filter scope', () => {
 	process.env.DEBUG = 'scopeA';
 
 	let events: any[] = [];
-	const cleanup = diary.middleware(logEvent => {
+	const cleanup = diary.after(logEvent => {
 		events.push(logEvent.message);
 	});
 
@@ -210,7 +210,7 @@ filter('filter scope wildcard', () => {
 	process.env.DEBUG = 'scope:*';
 
 	let events: any[] = [];
-	const cleanup = diary.middleware(logEvent => {
+	const cleanup = diary.after(logEvent => {
 		events.push(logEvent.message);
 	});
 

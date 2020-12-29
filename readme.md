@@ -32,9 +32,9 @@ yarn add diary
 ## 🚀 Usage
 
 ```ts
-import { info, diary, middleware } from 'diary';
+import { info, diary, after } from 'diary';
 
-middleware((logEvent) => {
+after((logEvent) => {
   if (logEvent.level === 'error') {
     Sentry.captureException(logEvent.extra[0]);
   }
@@ -134,7 +134,7 @@ A set of functions that map to `console.error`, `console.warn`, `console.debug`,
 All `extra` parameters are simply spread onto the console function, so
 node/browser's built-in formatters will format any objects etc.
 
-## middleware(callback: function, diary?: Diary)
+## {before,after}(callback: function, diary?: Diary)
 
 Returns: `Dispose`
 
@@ -165,13 +165,22 @@ interface LogEvent {
 <summary>Example</summary>
 
 ```ts
-import { middleware, info } from 'diary';
+import { before, after, info } from 'diary';
 
-middleware((logEvent) => {
+before((logEvent) => {
+  logEvent.context = {
+    hello: 'world',
+  };
+});
+
+after((logEvent) => {
   if (logEvent.level === 'error') {
     fetch('/api/errors', {
       method: 'POST',
-      body: JSON.stringify({ error: logEvent.extra[0] }),
+      body: JSON.stringify({
+        error: logEvent.extra[0],
+        context: logEvent.context,
+      }),
     });
   }
 });
@@ -231,13 +240,13 @@ Validation
 ✔ winston
 
 Benchmark
-  diary      x 788,373 ops/sec ±1.41% (87 runs sampled)
-  ulog       x 24,596 ops/sec ±40.49% (10 runs sampled)
-  roarr      x 1,222,889 ops/sec ±0.29% (94 runs sampled)
-  bunyan     x 16,506 ops/sec ±0.76% (94 runs sampled)
-  debug      x 35,378 ops/sec ±1.05% (91 runs sampled)
-  pino       x 47,708 ops/sec ±1.44% (92 runs sampled)
-  winston    x 13,436 ops/sec ±2.45% (84 runs sampled)
+  diary      x 840,954 ops/sec ±1.18% (89 runs sampled)
+  ulog       x 25,409 ops/sec ±40.24% (10 runs sampled)
+  roarr      x 1,205,786 ops/sec ±1.37% (93 runs sampled)
+  bunyan     x 16,343 ops/sec ±0.78% (95 runs sampled)
+  debug      x 35,392 ops/sec ±0.91% (89 runs sampled)
+  pino       x 47,908 ops/sec ±1.36% (95 runs sampled)
+  winston    x 13,790 ops/sec ±2.33% (93 runs sampled)
 ```
 
 > Ran with Node v15.5.0
