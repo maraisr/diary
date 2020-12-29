@@ -16,10 +16,7 @@ export interface LogEvent {
 
 const is_node = typeof process < 'u' && typeof process.stdout < 'u';
 
-const global_ctx = {} as Diary;
-const hooks = new WeakMap<Diary, LogHook[]>([
-	[global_ctx, []],
-]);
+const hooks = new WeakMap<Diary, LogHook[]>();
 
 const LEVELS = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, log: 10 } as const;
 
@@ -31,6 +28,8 @@ export const setLevel = (level: LogLevels) => {
 // read `localstorage`/`env` for scope "name"s allowed to log
 const toRegExp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '').split(/[\s,]+/).map(toRegExp);
+
+const default_diary = diary('');
 
 function logger(
 	ctx: Diary,
@@ -58,7 +57,7 @@ function logger(
 	// loop through all middlewares
 	let _hooks = hooks.get(ctx);
 	for (let i = 0; i < _hooks.length; i++) if (_hooks[i](r) === false) return;
-	_hooks = hooks.get(global_ctx);
+	_hooks = hooks.get(default_diary);
 	for (let i = 0; i < _hooks.length; i++) if (_hooks[i](r) === false) return;
 
 	// output
@@ -72,7 +71,7 @@ function logger(
 
 export const middleware = (
 	handler: LogHook,
-	ctx: Diary = global_ctx,
+	ctx: Diary = default_diary,
 ): VoidFunction => {
 	const _hooks = hooks.get(ctx);
 	return _hooks.splice.bind(_hooks, _hooks.push(handler) - 1, 1);
@@ -89,8 +88,6 @@ export function diary(name: string): Diary {
 	hooks.set(ctx, []);
 	return ctx;
 }
-
-const default_diary = diary('');
 
 export const fatal = default_diary.fatal;
 export const error = default_diary.error;

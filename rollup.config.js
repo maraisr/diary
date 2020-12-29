@@ -6,25 +6,25 @@ import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json';
 
 const MODULE = () => ({
-	external:[
+	external: [
 		...require('module').builtinModules,
 		...Object.keys(pkg.dependencies || {}),
-		...Object.keys(pkg.peerDependencies || {})
+		...Object.keys(pkg.peerDependencies || {}),
 	],
 	plugins: [
 		resolve({
 			extensions: ['.mjs', '.js', '.ts'],
-			preferBuiltins: true
+			preferBuiltins: true,
 		}),
 		typescript({}),
 		filesize({
 			showBrotliSize: true,
 			reporter: [
-				(options, bundle, {minSize, gzipSize, brotliSize, fileName}) => {
-					console.log(`${fileName} ↠ ${minSize} (min) ~ ${gzipSize} (gzip) ~ ${brotliSize} (brotli)`)
-				}
-			]
-		})
+				(options, bundle, { minSize, gzipSize, brotliSize, fileName }) => {
+					console.log(`${fileName} ↠ ${minSize} (min) ~ ${gzipSize} (gzip) ~ ${brotliSize} (brotli)`);
+				},
+			],
+		}),
 	],
 });
 
@@ -48,6 +48,19 @@ const make = file => ({
 	file: file,
 });
 
+const apply_terser = () => terser({
+	compress: {
+		pure_getters: true,
+		unsafe: true,
+		unsafe_arrows: true,
+		unsafe_comps: true,
+		hoist_funs: true,
+		hoist_vars: true,
+		passes: 10,
+	},
+	mangle: true,
+});
+
 export default [
 	{
 		...MODULE(),
@@ -58,13 +71,13 @@ export default [
 			{
 				...make(pkg['exports']['.']['import']),
 				file: 'lib/index.min.mjs',
-				plugins: [terser()],
+				plugins: [apply_terser()],
 			},
 			{
 				...make(pkg['unpkg']),
 				name: pkg.name,
 				format: 'umd',
-				plugins: [terser()],
+				plugins: [apply_terser()],
 			},
 		],
 	},

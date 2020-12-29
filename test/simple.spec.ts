@@ -76,6 +76,25 @@ test('middleware should allow cleanup', () => {
 	trap();
 });
 
+test('should inherit global middleware', () => {
+	const trap = trap_console('info');
+	const scope = diary.diary('scoped');
+	const ran = {global: 0, scoped: 0};
+	const cleanups = [
+		diary.middleware(() => {
+			++ran.global;
+		}),
+		diary.middleware(() => {
+			++ran.scoped;
+		}, scope)
+	];
+
+	scope.info('info message');
+	assert.equal(ran, {global: 1, scoped: 1});
+	cleanups.forEach(x => x());
+	trap();
+})
+
 test('setLevel', () => {
 	const infoTrap = trap_console('info');
 	const errorTrap = trap_console('error');
@@ -170,7 +189,7 @@ filter('filter scope', () => {
 	process.env.DEBUG = 'scopeA';
 
 	let events: any[] = [];
-	diary.middleware(logEvent => {
+	const cleanup = diary.middleware(logEvent => {
 		events.push(logEvent.message);
 	});
 
@@ -180,6 +199,7 @@ filter('filter scope', () => {
 	assert.equal(events, ['info a']);
 
 	infoTrap();
+	cleanup();
 });
 
 filter('filter scope wildcard', () => {
@@ -190,7 +210,7 @@ filter('filter scope wildcard', () => {
 	process.env.DEBUG = 'scope:*';
 
 	let events: any[] = [];
-	diary.middleware(logEvent => {
+	const cleanup = diary.middleware(logEvent => {
 		events.push(logEvent.message);
 	});
 
@@ -200,6 +220,7 @@ filter('filter scope wildcard', () => {
 	assert.equal(events, ['info a', 'info b']);
 
 	infoTrap();
+	cleanup();
 });
 
 //filter.run();
