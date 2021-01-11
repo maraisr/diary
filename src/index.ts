@@ -27,9 +27,8 @@ export function setLevel(level: LogLevels): void {
 }
 
 // read `localstorage`/`env` for scope "name"s allowed to log
-const toRegExp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
-const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || '').split(/[\s,]+/).map(toRegExp);
-
+const to_reg_exp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
+const allows: RegExp[] = ((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || 'a^').split(/[\s,]+/).map(to_reg_exp);
 const hooks = new WeakMap<Diary, HookPhases>(),
 	default_diary = diary(''),
 	global_hooks = hooks.get(default_diary);
@@ -46,7 +45,9 @@ function logger(
 	if (LEVELS[level] < active_level) return;
 
 	// is this "scope" allowed to log?
-	for (let i = 0; i < allows.length; i++) if (allows[i].test(name)) break; else return;
+	if (!allows.length) return;
+	let i = 0;
+	for (; i < allows.length; i++) if (allows[i].test(name)) break; else return;
 
 	// handle errors specially
 	if ((level === 'error' || level === 'fatal') && message instanceof Error) {
@@ -58,12 +59,10 @@ function logger(
 	let r: LogEvent = { name, level, message, extra };
 
 	// loop through all middlewares
-	let i = 0, j = 0, len = 0, arr, seq = [global_hooks.before, c_hooks.before, c_hooks.after, global_hooks.after];
-	for (; i < seq.length; i++) {
-		for (j = 0, arr = seq[i], len = arr.length; j < len;) {
+	let j = 0, len = 0, arr, seq = [global_hooks.before, c_hooks.before, c_hooks.after, global_hooks.after];
+	for (i = 0; i < seq.length; i++)
+		for (j = 0, arr = seq[i], len = arr.length; j < len;)
 			if (arr[j++](r) === false) return;
-		}
-	}
 
 	// output
 	let label = '';
