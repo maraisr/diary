@@ -1,6 +1,6 @@
 type HookFn = (event: LogEvent) => void | false;
 type HookPhases = { before: HookFn[], after: HookFn[] };
-type MiddlewareFn = (handler: HookFn, context?: Diary)=> VoidFunction;
+type MiddlewareFn = (handler: HookFn, context?: Diary)=> () => void;
 type LogFn = (message?: string, ...args: unknown[]) => void;
 type LogFnAsError = (message?: string | Error, ...args: unknown[]) => void;
 export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
