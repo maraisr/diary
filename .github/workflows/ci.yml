@@ -47,3 +47,9 @@ jobs:
 
             - name: Benchmark
               run: yarn bench
+
+            - name: Report
+              if: matrix.nodejs >= 16
+              run: |-
+                  nyc report --reporter=text-lcov > coverage.lcov;
+                  bash <(curl -s https://codecov.io/bash);
