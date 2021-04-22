@@ -7,7 +7,7 @@ import bunyan from 'bunyan';
 import debug from 'debug';
 import pino from 'pino';
 import roarr, { ROARR } from 'roarr';
-import ulog from 'ulog/full';
+import ulog from 'ulog';
 import { equal } from 'uvu/assert';
 import winston from 'winston';
 import { diary, after } from '../src';
