@@ -8,6 +8,7 @@ import debug from 'debug';
 import pino from 'pino';
 import roarr, { ROARR } from 'roarr';
 import ulog from 'ulog';
+import { Logger } from '@graphile/logger';
 import { equal } from 'uvu/assert';
 import winston from 'winston';
 import { diary, after } from '../src';
@@ -25,8 +26,12 @@ async function runner(candidates: Record<string, Function>) {
 		console.log('  ' + e.target);
 	});
 
+	const sorted_candidates = Object.entries(candidates).sort(([a], [b]) =>
+		a.localeCompare(b),
+	);
+
 	console.log('\nValidation');
-	for (const [name, fn] of Object.entries(candidates)) {
+	for (const [name, fn] of sorted_candidates) {
 		const trap = trap_console('log');
 		const result = fn();
 		trap();
@@ -40,8 +45,8 @@ async function runner(candidates: Record<string, Function>) {
 
 	console.log('\nBenchmark');
 	const trap = trap_console('log');
-	for (const [name, fn] of Object.entries(candidates)) {
-		bench.add(name.padEnd(10), {
+	for (const [name, fn] of sorted_candidates) {
+		bench.add(name.padEnd(20), {
 			fn,
 		});
 	}
@@ -141,6 +146,16 @@ global.ROARR.write = ROARR.write = () => {};
 				],
 			});
 			suite.info('info message');
+			return events;
+		},
+		['@graphile/logger']() {
+			let events: any[] = [];
+			const logger = new Logger((scope) => {
+				return (level, message, meta) => {
+					events.push({ scope, level, message, meta });
+				};
+			});
+			logger.info('info message');
 			return events;
 		},
 	});

@@ -231,25 +231,27 @@ info('something informative');
 
 ```
 Validation
-✔ diary
-✔ ulog
-✔ roarr
+✔ @graphile/logger
 ✔ bunyan
 ✔ debug
+✔ diary
 ✔ pino
+✔ roarr
+✔ ulog
 ✔ winston
 
 Benchmark
-  diary      x 840,954 ops/sec ±1.18% (89 runs sampled)
-  ulog       x 25,409 ops/sec ±40.24% (10 runs sampled)
-  roarr      x 1,205,786 ops/sec ±1.37% (93 runs sampled)
-  bunyan     x 16,343 ops/sec ±0.78% (95 runs sampled)
-  debug      x 35,392 ops/sec ±0.91% (89 runs sampled)
-  pino       x 47,908 ops/sec ±1.36% (95 runs sampled)
-  winston    x 13,790 ops/sec ±2.33% (93 runs sampled)
+  @graphile/logger     x 21,464,898 ops/sec ±0.70% (91 runs sampled)
+  bunyan               x 118,121 ops/sec ±0.75% (87 runs sampled)
+  debug                x 231,880 ops/sec ±2.98% (88 runs sampled)
+  diary                x 696,904 ops/sec ±4.16% (78 runs sampled)
+  pino                 x 49,684 ops/sec ±2.32% (89 runs sampled)
+  roarr                x 1,102,717 ops/sec ±1.37% (90 runs sampled)
+  ulog                 x 23,496 ops/sec ±21.35% (20 runs sampled)
+  winston              x 11,008 ops/sec ±11.58% (75 runs sampled)
 ```
 
-> Ran with Node v15.5.0
+> Ran with Node v16.0.0
 
 ## License
 
