@@ -1,55 +1,63 @@
 name: CI
 
 on:
-    push:
-        branches: [main]
-    pull_request: {}
+  push:
+    branches: [main]
+  pull_request: {}
 
 jobs:
-    test:
-        name: Node.js v${{ matrix.nodejs }}
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                nodejs: [12, 14, 15, 16]
-        steps:
-            - uses: actions/checkout@main
-            - uses: actions/setup-node@main
-              with:
-                  node-version: ${{ matrix.nodejs }}
+  test:
+    name: Node.js v${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12, 14, 16]
+    steps:
+      - uses: actions/checkout@main
 
-            - name: (env) yarn global
-              run: |-
-                  yarn global bin >> $GITHUB_PATH
-                  echo "YARN_CACHE_DIR=$(yarn cache dir)" >> $GITHUB_ENV
+      - name: (env) setup node v${{ matrix.node }}
+        uses: actions/setup-node@main
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: true
 
-            - name: (env) cache
-              uses: actions/cache@main
-              with:
-                  path: ${{ env.YARN_CACHE_DIR }}
-                  key:
-                      ${{ runner.os }}-node${{ matrix.nodejs }}-${{
-                      hashFiles('./package.json', './yarn.lock') }}
+      - name: (env) prepare
+        run: curl -L https://pnpm.js.org/pnpm.js | node - add --global pnpm
 
-            - name: Install
-              run: |-
-                  yarn --frozen-lockfile;
-                  yarn global add nyc;
+      - name: (env) cache
+        id: cache
+        uses: actions/cache@main
+        with:
+          path: /tmp/pnpmstore
+          key: ${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-${{ matrix.node }}-
 
-            - name: Compile
-              run: yarn build
+      - name: (env) restore cache
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: lz4 -d /tmp/pnpmstore | tar -xf - ;
 
-            - name: Type Check
-              run: yarn typecheck
+      - name: Install
+        run: |-
+          pnpm install
+          pnpm i -g nyc
 
-            - name: Test w/ Coverage
-              run: nyc --include=src yarn test
+      - name: (env) prepare cache
+        run: tar -cf - ~/.pnpm-store | lz4 > /tmp/pnpmstore
 
-            - name: Benchmark
-              run: yarn bench
+      - name: Compiles
+        run: pnpm run build
 
-            - name: Report
-              if: matrix.nodejs >= 16
-              run: |-
-                  nyc report --reporter=text-lcov > coverage.lcov;
-                  bash <(curl -s https://codecov.io/bash);
+      - name: Test w/ Coverage
+        run: nyc --include=src pnpm test
+
+      - name: Check Types
+        run: pnpm run typecheck
+
+      - name: Benchmark
+        run: pnpm run bench
+
+      - name: Report
+        if: matrix.nodejs >= 16
+        run: |-
+          nyc report --reporter=text-lcov > coverage.lcov;
+          bash <(curl -s https://codecov.io/bash);

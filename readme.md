@@ -93,8 +93,7 @@ scopeB2.info('message'); // will log ✔
 
 Returns: [log functions](#log-functions)
 
-> A default diary is exported, accessible through simply importing any
-> [log function](#log-functions).
+> A default diary is exported, accessible through simply importing any [log function](#log-functions).
 >
 > <details>
 > <summary>Example of default diary</summary>
@@ -111,40 +110,36 @@ Returns: [log functions](#log-functions)
 
 Type: `string`
 
-The name given to this _diary_, will appear in the middleware under the `name`
-property as well as in console messages.
+The name given to this _diary_, will appear in the middleware under the `name` property as well as in console messages.
 
 ### _log functions_
 
-A set of functions that map to `console.error`, `console.warn`, `console.debug`,
-`console.info` and `console.info`. Aptly named;
+A set of functions that map to `console.error`, `console.warn`, `console.debug`, `console.info` and `console.info`.
+Aptly named;
 
 - `fatal(message: string|Error, ...extra: any[])`
 - `error(message: string|Error, ...extra: any[])`
 
-  If an `Error` instance is sent, the error object will be accessible through
-  the first item in the `extra`'s array in a middleware. This is for both
-  `fatal` and `error`.
+  If an `Error` instance is sent, the error object will be accessible through the first item in the `extra`'s array in a
+  middleware. This is for both `fatal` and `error`.
 
 - `warn(message: string, ...extra: any[])`
 - `debug(message: string, ...extra: any[])`
 - `info(message: string, ...extra: any[])`
 - `log(message: string, ...extra: any[])`
 
-All `extra` parameters are simply spread onto the console function, so
-node/browser's built-in formatters will format any objects etc.
+All `extra` parameters are simply spread onto the console function, so node/browser's built-in formatters will format
+any objects etc.
 
 ## {before,after}(callback: function, diary?: Diary)
 
 Returns: `Dispose`
 
-Middlewares are function handlers that run for every
-[log function](#log-functions). They allow for modifying the log event object,
-or simply returning `false` to bailout. Executing in a _forwards_ direction,
-meaning middlewares will be run sequentially as they were defined.
+Middlewares are function handlers that run for every [log function](#log-functions). They allow for modifying the log
+event object, or simply returning `false` to bailout. Executing in a _forwards_ direction, meaning middlewares will be
+run sequentially as they were defined.
 
-When the return is called, it will remove the middleware from the diary
-instance.
+When the return is called, it will remove the middleware from the diary instance.
 
 #### handler
 
@@ -188,8 +183,7 @@ after((logEvent) => {
 info('something informative');
 ```
 
-> This method isn't a Promise, so won't be awaited. It's a fire and forget kinda
-> deal.
+> This method isn't a Promise, so won't be awaited. It's a fire and forget kinda deal.
 
 </details>
 
