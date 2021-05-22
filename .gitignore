@@ -13,7 +13,5 @@ node_modules
 /.vscode
 
 # Code
-/browser
-/node
 /types
 /lib
