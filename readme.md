@@ -1,6 +1,6 @@
 <div align="center">
 	<h1><img src="./shots/logo.png" alt="diary"/></h1>
-	<p align="center"><code>yarn add diary</code> makes logging simple</p>
+	<p align="center"><code>npm add diary</code> makes logging simple</p>
 	<hr />
 	<span>
 		<a href="https://github.com/maraisr/diary/actions/workflows/ci.yml">
@@ -26,7 +26,7 @@
 ## ⚙️ Install
 
 ```sh
-yarn add diary
+npm add diary
 ```
 
 ## 🚀 Usage
