@@ -212,7 +212,7 @@ info('something informative');
 
 </details>
 
-#### diary (optional)
+#### diary <small>(optional)</small>
 
 Type: `Diary`
 
