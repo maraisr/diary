@@ -53,7 +53,25 @@ const hooks = new WeakMap<Diary, HookPhases>(),
 	global_hooks = hooks.get(default_diary);
 
 /**
- * TODO!!
+ * Configure what logs to emit. Follows the colon delimited scheme.
+ *
+ * @example
+ * ```ts
+ * import { diary, enable } from 'diary';
+ *
+ * enable('scope:A');
+ *
+ * const scopeA = diary('scope:A');
+ * const scopeB = diary('scope:B');
+ *
+ * scopeA.log('foo bar'); // => 'foo bar'
+ * scopeB.log('foo bar'); // => na
+ *
+ * enable('scope:*');
+ *
+ * scopeA.log('foo bar'); // => 'foo bar'
+ * scopeB.log('foo bar'); // => 'foo bar'
+ * ```
  */
 export const enable = (allows_query: string) => {
 	allows = allows_query.split(/[\s,]+/).map(to_reg_exp);

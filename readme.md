@@ -87,6 +87,31 @@ scopeB2.info('message'); // will log ✔
 
 > `$ DEBUG=scopeA:two,scopeB:* node example.js`
 
+#### _~ programmatic_
+
+```ts
+import { diary, enable } from 'diary';
+
+enable('scopeA:two,scopeB:*');
+
+const scopeA1 = diary('scopeA:one');
+const scopeA2 = diary('scopeA:two');
+const scopeB1 = diary('scopeB:one');
+const scopeB2 = diary('scopeB:two');
+
+scopeA1.info('message'); // won't log ✗
+scopeA2.info('message'); // will log ✔
+scopeB1.info('message'); // will log ✔
+scopeB2.info('message'); // will log ✔
+
+enable('scopeA:*');
+
+scopeA1.info('message'); // will log ✔
+scopeA2.info('message'); // will log ✔
+scopeB1.info('message'); // won't log ✗
+scopeB2.info('message'); // won't log ✗
+```
+
 ## 🔎 API
 
 ### diary(name: string)
@@ -194,6 +219,12 @@ Type: `Diary`
 The result of a calling [diary](#diary-name-string);
 
 A middleware without the optional second parameter, will run for all diaries.
+
+### enable(query: string)
+
+Type: `Function`
+
+Opts certain log messages into being output. See more [here](#programmatic).
 
 ## 💨 Benchmark
 
