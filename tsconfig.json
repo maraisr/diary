@@ -1,21 +1,17 @@
 {
-	"ts-node": {
-		"transpileOnly": true,
-		"compilerOptions": {
-			"module": "commonjs",
-			"sourceMap": true
-		},
-		"include": ["test/**/*", "bench/*", "src/**/*"]
-	},
 	"extends": "@marais/tsconfig",
 	"compilerOptions": {
 		"rootDir": "./",
+		"baseUrl": ".",
 		"outDir": "dist",
 		"target": "ES2019",
 		"declaration": false,
 		"removeComments": false,
-		"lib": ["DOM", "ESNext"]
+		"lib": ["DOM", "ESNext"],
+		"paths": {
+			"diary/*": ["src/*"]
+		}
 	},
-	"files": ["src/index.ts"],
+	"include": ["src/*.ts"],
 	"exclude": ["node_modules"]
 }

@@ -1,6 +1,6 @@
 {
 	"name": "diary",
-	"version": "0.0.12",
+	"version": "0.1.0",
 	"description": "Fast logging library for both Node and Browser.",
 	"keywords": [
 		"fast",
@@ -18,25 +18,48 @@
 	"sideEffects": false,
 	"exports": {
 		".": {
-			"import": "./lib/index.mjs",
-			"require": "./lib/index.js"
+			"import": "./diary/index.mjs",
+			"require": "./diary/index.js"
+		},
+		"./json": {
+			"import": "./json/index.mjs",
+			"require": "./json/index.js"
+		},
+		"./utils": {
+			"import": "./utils/index.mjs",
+			"require": "./utils/index.js"
 		},
 		"./package.json": "./package.json"
 	},
-	"main": "lib/index.js",
-	"unpkg": "lib/index.min.js",
-	"module": "lib/index.mjs",
-	"types": "types/index.d.ts",
+	"main": "diary/index.js",
+	"unpkg": "diary/index.min.js",
+	"module": "diary/index.mjs",
+	"types": "types/diary.d.ts",
+	"typesVersions": {
+		"*": {
+			".": [
+				"types/diary.d.ts"
+			],
+			"/utils": [
+				"types/utils.d.ts"
+			],
+			"/json": [
+				"types/json.d.ts"
+			]
+		}
+	},
 	"files": [
 		"types",
-		"lib"
+		"diary",
+		"json",
+		"utils"
 	],
 	"scripts": {
-		"bench": "node -r ts-node/register bench/index.ts",
-		"build": "rollup -c",
+		"bench": "cross-env TS_NODE_PROJECT=tsconfig.test.json DEBUG=standard ROARR_LOG=true node -r ts-eager/register bench/index.ts",
+		"build": "node bin/build && tsc --declaration true --emitDeclarationOnly --outDir types --rootDir src --noEmit false",
 		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
 		"prepublishOnly": "pnpm run build",
-		"test": "cross-env DEBUG=* uvu -r ts-node/register -i helpers.ts test",
+		"test": "cross-env DEBUG=* TS_NODE_PROJECT=tsconfig.test.json uvu -r ts-eager/register -i helpers.ts test",
 		"typecheck": "tsc --noEmit"
 	},
 	"prettier": {
@@ -64,22 +87,18 @@
 	"devDependencies": {
 		"@graphile/logger": "0.2.0",
 		"@marais/tsconfig": "0.0.1",
-		"@rollup/plugin-node-resolve": "13.0.0",
 		"@types/benchmark": "2.1.0",
 		"@types/node": "15.6.1",
 		"benchmark": "2.1.4",
 		"bunyan": "1.8.15",
 		"cross-env": "7.0.3",
 		"debug": "4.3.1",
+		"esbuild": "0.12.2",
 		"pino": "6.11.3",
 		"prettier": "2.3.0",
 		"roarr": "4.2.5",
-		"rollup": "2.50.0",
-		"rollup-plugin-dts": "3.0.2",
-		"rollup-plugin-filesize": "9.1.1",
-		"rollup-plugin-terser": "7.0.2",
-		"rollup-plugin-typescript2": "0.30.0",
-		"ts-node": "10.0.0",
+		"ts-eager": "2.0.2",
+		"tsconfig-paths": "3.9.0",
 		"tslib": "2.2.0",
 		"typescript": "4.2.4",
 		"ulog": "2.0.0-beta.18",

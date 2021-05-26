@@ -1,6 +1,6 @@
 import * as assert from 'uvu/assert';
-import * as diary from '../src';
-import { enable } from '../src';
+import * as diary from '../src/diary';
+import { enable } from '../src/diary';
 import { describe, trap_console } from './helpers';
 
 const levels = ['fatal', 'error', 'warn', 'debug', 'info', 'log'] as const;

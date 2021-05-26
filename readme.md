@@ -240,14 +240,14 @@ Validation
 ✔ winston
 
 Benchmark
-  @graphile/logger     x 21,752,928 ops/sec ±1.21% (92 runs sampled)
-  bunyan               x 117,223 ops/sec ±0.26% (93 runs sampled)
-  debug                x 234,245 ops/sec ±1.16% (90 runs sampled)
-  diary                x 808,195 ops/sec ±1.96% (82 runs sampled)
-  pino                 x 49,953 ops/sec ±0.71% (94 runs sampled)
-  roarr                x 809,954 ops/sec ±1.52% (92 runs sampled)
-  ulog                 x 23,824 ops/sec ±24.29% (18 runs sampled)
-  winston              x 12,104 ops/sec ±4.96% (85 runs sampled)
+  @graphile/logger     x 18,073,373 ops/sec ±1.00% (87 runs sampled)
+  bunyan               x 108,855 ops/sec ±0.77% (95 runs sampled)
+  debug                x 200,244 ops/sec ±1.49% (85 runs sampled)
+  diary                x 1,144,250 ops/sec ±1.66% (83 runs sampled)
+  pino                 x 47,588 ops/sec ±1.11% (90 runs sampled)
+  roarr                x 822,330 ops/sec ±1.13% (88 runs sampled)
+  ulog                 x 24,555 ops/sec ±28.02% (17 runs sampled)
+  winston              x 11,048 ops/sec ±5.27% (81 runs sampled)
 ```
 
 > Ran with Node v16.0.0
