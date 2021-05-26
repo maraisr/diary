@@ -156,7 +156,7 @@ Aptly named;
 All `extra` parameters are simply spread onto the console function, so node/browser's built-in formatters will format
 any objects etc.
 
-## {before,after}(callback: function, diary?: Index)
+## {before,after}(callback: function, diary?: Diary)
 
 Returns: `Dispose`
 
@@ -214,7 +214,7 @@ info('something informative');
 
 #### diary <small>(optional)</small>
 
-Type: `Index`
+Type: `Diary`
 
 The result of a calling [diary](#diary-name-string);
 
