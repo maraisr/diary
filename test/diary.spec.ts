@@ -5,8 +5,6 @@ import { describe, trap_console } from './helpers';
 
 const levels = ['fatal', 'error', 'warn', 'debug', 'info', 'log'] as const;
 
-enable('*');
-
 describe('api', (it) => {
 	it('exports', () => {
 		[...levels, 'diary', 'before', 'after'].forEach((verb) => {
@@ -45,47 +43,59 @@ describe('api', (it) => {
 });
 
 describe('allows', (it) => {
-	it('should some scopes', () => {
-		const infoTrap = trap_console('info');
-		const scopeA = diary.diary('scopeA');
-		const scopeB = diary.diary('scopeB');
+	it('should only allow some scopes', () => {
+		let events: any[] = [];
+		const scopeA = diary.diary('scopeA', (ev) => events.push(ev.message));
+		const scopeB = diary.diary('scopeB', (ev) => events.push(ev.message));
 
 		enable('scopeA');
-
-		let events: any[] = [];
-		const cleanup = diary.after((logEvent) => {
-			events.push(logEvent.message);
-		});
 
 		scopeA.info('info a');
 		scopeB.info('info b');
 
 		assert.equal(events, ['info a']);
 
-		infoTrap();
-		cleanup();
 		enable('*');
 	});
 
 	it('should allow nested scopes', () => {
-		const infoTrap = trap_console('info');
-		const scopeA = diary.diary('scope:a');
-		const scopeB = diary.diary('scope:b');
+		let events: any[] = [];
+		const scopeA = diary.diary('scope:a', (ev) => events.push(ev.message));
+		const scopeB = diary.diary('scope:b', (ev) => events.push(ev.message));
 
 		enable('scope:*');
-
-		let events: any[] = [];
-		const cleanup = diary.after((logEvent) => {
-			events.push(logEvent.message);
-		});
 
 		scopeA.info('info a');
 		scopeB.info('info b');
 
 		assert.equal(events, ['info a', 'info b']);
 
-		infoTrap();
-		cleanup();
+		enable('*');
+	});
+
+	it('should run all handlers when enablement is false', () => {
+		let events: any[] = [];
+		const scopeA = diary.diary('scope:a', (ev) => events.push(ev.message));
+		const scopeB = diary.diary('scope:b', (ev) => events.push(ev.message));
+
+		const cleanup_a = diary.after(
+			(ev) => void events.push(ev.message),
+			scopeA,
+		);
+		const cleanup_b = diary.after(
+			(ev) => void events.push(ev.message),
+			scopeB,
+		);
+
+		enable('scope:a');
+
+		scopeA.info('info a');
+		scopeB.info('info b');
+
+		assert.equal(events, ['info a', 'info a', 'info b']);
+
+		cleanup_a();
+		cleanup_b();
 		enable('*');
 	});
 });

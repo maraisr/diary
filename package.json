@@ -37,7 +37,9 @@
 	"types": "types/index.d.ts",
 	"typesVersions": {
 		"*": {
-			"*": ["types/*"]
+			"*": [
+				"types/*"
+			]
 		}
 	},
 	"files": [

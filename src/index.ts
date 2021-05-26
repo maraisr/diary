@@ -89,13 +89,6 @@ function logger(
 	message: Error | string,
 	...extra: unknown[]
 ): void {
-	// is this "scope" allowed to log?
-	if (!allows.length) return;
-	let i = 0;
-	for (; i < allows.length; i++)
-		if (allows[i].test(name)) break;
-		else return;
-
 	// handle errors specially
 	if ((level === 'error' || level === 'fatal') && message instanceof Error) {
 		extra.unshift(message);
@@ -105,13 +98,19 @@ function logger(
 	let r: LogEvent = { name, level, message: message as string, extra };
 
 	// pipe through middleware
-	let j = 0, len = 0,
+	let i = 0, j = 0, len = 0,
 		arr,
-		seq = [ global_hooks.before, c_hooks.before, c_hooks.after, global_hooks.after ];
+		seq = [global_hooks.before, c_hooks.before, c_hooks.after, global_hooks.after];
 
-	for (i = 0; i < seq.length; i++)
+	for (; i < seq.length; i++)
 		for (j = 0, arr = seq[i], len = arr.length; j < len;)
 			if (arr[j++](r) === false) return;
+
+	// is this "scope" allowed to log?
+	if (!allows.length) return;
+	for (i = 0; i < allows.length; i++)
+		if (allows[i].test(name)) break;
+		else return;
 
 	// output
 	reporter(r);

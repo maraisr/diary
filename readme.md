@@ -50,6 +50,8 @@ scopedDiary.info('this other important thing happened');
 
 Controlling runtime emission of logs:
 
+> **Note:** all middleware will execute for all logs irrespective of their enablement.
+
 ### _browser_
 
 ```ts
