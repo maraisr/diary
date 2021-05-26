@@ -1,5 +1,5 @@
-import { Test } from 'uvu';
-import * as diary from '../src';
+import { suite } from 'uvu';
+import type { Test } from 'uvu';
 
 const noop: VoidFunction = () => {};
 
@@ -10,12 +10,12 @@ export const trap_console = (
 	if (level === 'fatal') level = 'error';
 	const old = console[level];
 	console[level] = handler;
-	// @ts-expect-error line above fixes it.
+
 	return () => (console[level] = old);
 };
 
-export const reset = (test: Test) => {
-	test.after(() => {
-		diary.setLevel('log');
-	});
+export const describe = (name: string, it: (t: Test) => void) => {
+	const s = suite(name);
+	it(s);
+	s.run();
 };
