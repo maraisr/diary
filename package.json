@@ -34,7 +34,7 @@
 	"scripts": {
 		"bench": "node -r ts-node/register bench/index.ts",
 		"build": "rollup -c",
-		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*}.+(ts|json|yml|md)\"",
+		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
 		"prepublishOnly": "pnpm run build",
 		"test": "cross-env DEBUG=* uvu -r ts-node/register -i helpers.ts test",
 		"typecheck": "tsc --noEmit"

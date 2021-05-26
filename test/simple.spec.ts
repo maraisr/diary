@@ -11,7 +11,6 @@ reset(test);
 test('api', () => {
 	[...levels, 'diary', 'before', 'after'].forEach((verb) => {
 		assert.type(
-			// @ts-expect-error
 			diary[verb],
 			'function',
 			`Expected diary to have #${verb} function`,
@@ -25,7 +24,6 @@ test('should now share middleware between scopes', () => {
 	const scopeB = diary.diary('scopeB');
 	const who_ran = { scopeA: 0, scopeB: 0 };
 	diary.after(({ name }) => {
-		// @ts-expect-error
 		++who_ran[name];
 	}, scopeA);
 	scopeA.info('info');
@@ -50,7 +48,7 @@ test('#error should have stack as extra', () => {
 	const scope = diary.diary('error');
 	let events: any[] = [];
 	const trap = trap_console('error');
-	diary.after(logEvent => {
+	diary.after((logEvent) => {
 		events.push(logEvent);
 	}, scope);
 	scope.error(new Error('some error'));
@@ -79,46 +77,25 @@ test('middleware should allow cleanup', () => {
 test('should inherit global middleware', () => {
 	const trap = trap_console('info');
 	const scope = diary.diary('scoped');
-	const ran = {global: 0, scoped: 0};
+	const ran = { global: 0, scoped: 0 };
 	const cleanups = [
 		diary.after(() => {
 			++ran.global;
 		}),
 		diary.after(() => {
 			++ran.scoped;
-		}, scope)
+		}, scope),
 	];
 
 	scope.info('info message');
-	assert.equal(ran, {global: 1, scoped: 1});
-	cleanups.forEach(x => x());
+	assert.equal(ran, { global: 1, scoped: 1 });
+	cleanups.forEach((x) => x());
 	trap();
-})
-
-test('setLevel', () => {
-	const infoTrap = trap_console('info');
-	const errorTrap = trap_console('error');
-	const scope = diary.diary('level');
-	let events: any[] = [];
-	diary.after(logEvent => {
-		events.push(logEvent);
-	}, scope);
-	scope.info('info a');
-	scope.error('error a');
-	diary.setLevel('error');
-	scope.info('info b');
-	scope.error('error b');
-
-	assert.equal(events.length, 3);
-	assert.equal(events.map(i => i.message), ['info a', 'error a', 'error b']);
-
-	infoTrap();
-	errorTrap();
 });
 
 test.run();
 
-levels.forEach(level => {
+levels.forEach((level) => {
 	const level_test = suite(`level :: ${level}`);
 	reset(level_test);
 
@@ -134,46 +111,52 @@ levels.forEach(level => {
 	level_test('should log something', () => {
 		const scope = diary.diary(level);
 		let events: any[] = [];
-		diary.after(logEvent => {
+		diary.after((logEvent) => {
 			events.push(logEvent);
 		}, scope);
 		scope[level]('something');
 		scope[level]('something else');
-		assert.equal(events, [{
-			name: level,
-			level: level,
-			message: 'something',
-			extra: [],
-		}, {
-			name: level,
-			level: level,
-			message: 'something else',
-			extra: [],
-		}]);
+		assert.equal(events, [
+			{
+				name: level,
+				level: level,
+				message: 'something',
+				extra: [],
+			},
+			{
+				name: level,
+				level: level,
+				message: 'something else',
+				extra: [],
+			},
+		]);
 	});
 
 	level_test('should allow middleware to alter message', () => {
 		const scope = diary.diary(level);
 		let events: any[] = [];
-		diary.after(logEvent => {
+		diary.after((logEvent) => {
 			logEvent.message = 'altered';
 		}, scope);
-		diary.after(logEvent => {
+		diary.after((logEvent) => {
 			events.push(logEvent);
 		}, scope);
 		scope[level]('something');
 		scope[level]('something else');
-		assert.equal(events, [{
-			name: level,
-			level: level,
-			message: 'altered',
-			extra: [],
-		}, {
-			name: level,
-			level: level,
-			message: 'altered',
-			extra: [],
-		}]);
+		assert.equal(events, [
+			{
+				name: level,
+				level: level,
+				message: 'altered',
+				extra: [],
+			},
+			{
+				name: level,
+				level: level,
+				message: 'altered',
+				extra: [],
+			},
+		]);
 	});
 
 	level_test.run();
@@ -189,7 +172,7 @@ filter('filter scope', () => {
 	process.env.DEBUG = 'scopeA';
 
 	let events: any[] = [];
-	const cleanup = diary.after(logEvent => {
+	const cleanup = diary.after((logEvent) => {
 		events.push(logEvent.message);
 	});
 
@@ -210,7 +193,7 @@ filter('filter scope wildcard', () => {
 	process.env.DEBUG = 'scope:*';
 
 	let events: any[] = [];
-	const cleanup = diary.after(logEvent => {
+	const cleanup = diary.after((logEvent) => {
 		events.push(logEvent.message);
 	});
 

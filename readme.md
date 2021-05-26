@@ -195,32 +195,6 @@ The result of a calling [diary](#diary-name-string);
 
 A middleware without the optional second parameter, will run for all diaries.
 
-### setLevel(level: LogLevel)
-
-Returns: `void`
-
-Sets the level form which log's will get output to the console.
-
-#### level
-
-Type: `string`
-
-One of the [log functions](#log-functions)'s name.
-
-<details>
-<summary>Example</summary>
-
-```ts
-import { setLevel, info } from 'diary';
-setLevel('error');
-
-info('something informative');
-```
-
-</details>
-
-> Note; this will also filter the events from all middlewares.
-
 ## 💨 Benchmark
 
 ```

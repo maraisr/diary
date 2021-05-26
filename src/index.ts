@@ -7,8 +7,6 @@ export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
 type ErrorLevels = Extract<LogLevels, 'fatal' | 'error'>;
 export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFn> & Record<ErrorLevels, LogFnAsError>;
 
-type LogValues = typeof LEVELS[keyof typeof LEVELS];
-
 export interface LogEvent {
 	name: string;
 	level: LogLevels;
@@ -18,13 +16,6 @@ export interface LogEvent {
 }
 
 const is_node = typeof process < 'u' && typeof process.stdout < 'u';
-
-const LEVELS = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, log: 10 } as const;
-
-let active_level: LogValues = LEVELS.log;
-export function setLevel(level: LogLevels): void {
-	active_level = LEVELS[level];
-}
 
 // read `localstorage`/`env` for scope "name"s allowed to log
 const to_reg_exp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
@@ -41,9 +32,6 @@ function logger(
 	message: Error | string,
 	...extra: unknown[]
 ): void {
-	// check if `setLevel` prohibits processing this
-	if (LEVELS[level] < active_level) return;
-
 	// is this "scope" allowed to log?
 	if (!allows.length) return;
 	let i = 0;
