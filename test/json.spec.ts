@@ -31,11 +31,10 @@ describe('output', (it) => {
 			result = args.join('');
 		});
 
-		const scope = diary.diary('json', json.reporter);
-
-		diary.after((event) => {
+		const scope = diary.diary('json', event => {
 			event.context = { sequence: 0 };
-		}, scope);
+			json.reporter(event)
+		});
 
 		scope.info('foo %s', 'bar');
 
