@@ -1,7 +1,7 @@
 type DisposeFn = () => void;
 
 type HookFn = (event: LogEvent) => void | false;
-type HookPhases = { before: HookFn[], after: HookFn[] };
+type HookPhases = { before: HookFn[]; after: HookFn[] };
 type MiddlewareFn = (handler: HookFn, context?: Diary) => DisposeFn;
 export type Reporter = (event: LogEvent) => void;
 
@@ -92,7 +92,9 @@ function logger(
 	// is this "scope" allowed to log?
 	if (!allows.length) return;
 	let i = 0;
-	for (; i < allows.length; i++) if (allows[i].test(name)) break; else return;
+	for (; i < allows.length; i++)
+		if (allows[i].test(name)) break;
+		else return;
 
 	// handle errors specially
 	if ((level === 'error' || level === 'fatal') && message instanceof Error) {
@@ -103,7 +105,10 @@ function logger(
 	let r: LogEvent = { name, level, message: message as string, extra };
 
 	// pipe through middleware
-	let j = 0, len = 0, arr, seq = [global_hooks.before, c_hooks.before, c_hooks.after, global_hooks.after];
+	let j = 0, len = 0,
+		arr,
+		seq = [ global_hooks.before, c_hooks.before, c_hooks.after, global_hooks.after ];
+
 	for (i = 0; i < seq.length; i++)
 		for (j = 0, arr = seq[i], len = arr.length; j < len;)
 			if (arr[j++](r) === false) return;
