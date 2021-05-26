@@ -91,12 +91,11 @@ const loglevel_strings: Record<LogLevels, string> = {
 } as const;
 
 const default_reporter: Reporter = (event) => {
-	let label = '', { level, name } = event;
-	if (is_node) label = `${loglevel_strings[level]} `;
-	if (name) label += `[${name}] `;
+	let label = '';
+	if (is_node) label = `${loglevel_strings[event.level]} `;
+	if (event.name) label += `[${event.name}] `;
 
-	if (level === 'fatal') level = 'error'; // there is no `console.fatal`
-	(console[level] || console.log)(`${label}${event.message}`, ...event.extra);
+	console[event.level === 'fatal' ? 'error' : event.level](label + event.message, ...event.extra);
 };
 
 // ~ Public api
