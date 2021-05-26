@@ -1,4 +1,4 @@
-import type { Reporter } from './diary';
+import type { Reporter } from 'diary';
 import { sprintf } from 'diary/utils';
 
 export const reporter: Reporter = ({ name, level, message, extra, ...rest }) =>

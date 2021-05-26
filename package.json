@@ -1,6 +1,6 @@
 {
 	"name": "diary",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Fast logging library for both Node and Browser.",
 	"keywords": [
 		"fast",
@@ -34,18 +34,10 @@
 	"main": "diary/index.js",
 	"unpkg": "diary/index.min.js",
 	"module": "diary/index.mjs",
-	"types": "types/diary.d.ts",
+	"types": "types/index.d.ts",
 	"typesVersions": {
 		"*": {
-			".": [
-				"types/diary.d.ts"
-			],
-			"/utils": [
-				"types/utils.d.ts"
-			],
-			"/json": [
-				"types/json.d.ts"
-			]
+			"*": ["types/*"]
 		}
 	},
 	"files": [

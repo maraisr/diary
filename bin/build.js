@@ -1,7 +1,7 @@
 const pkg = require('../package.json');
 const esbuild = require('esbuild');
 
-const externals = ['diary/utils'];
+const externals = ['diary/utils', 'diary'];
 
 /**
  * @param {string} input
@@ -28,11 +28,11 @@ async function bundle(input, files) {
 }
 
 Promise.all([
-	bundle('src/diary.ts', pkg.exports['.']),
+	bundle('src/index.ts', pkg.exports['.']),
 	bundle('src/json.ts', pkg.exports['./json']),
 	bundle('src/utils.ts', pkg.exports['./utils']),
 	esbuild.build({
-		entryPoints: ['src/diary.ts'],
+		entryPoints: ['src/index.ts'],
 		bundle: true,
 		format: 'cjs',
 		platform: 'browser',

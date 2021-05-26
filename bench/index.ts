@@ -9,7 +9,7 @@ import ulog from 'ulog';
 import { Logger } from '@graphile/logger';
 import { equal } from 'uvu/assert';
 import winston from 'winston';
-import { diary } from '../src/diary';
+import { diary } from '../src';
 
 const trap_console = (verb: keyof typeof console) => {
 	const old = console[verb];

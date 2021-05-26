@@ -1,4 +1,4 @@
-import { debug, diary, error, info, warn, log } from './src/diary';
+import { debug, diary, error, info, warn, log } from 'diary';
 
 error('im a generic error');
 warn('im a generic warn');

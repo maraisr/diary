@@ -135,6 +135,7 @@ function logger(
  *
  * @param name A name to give this diary instance this can be unique to your application, or not. When logged, it'll
  *     exist after the level string, eg: `ℹ info [my-fancy-app] app has started`
+ * @param onEmit The reporter that handles the output of the log messages
  */
 export function diary(name: string, onEmit?: Reporter): Diary {
 	const ctx = {} as Diary,

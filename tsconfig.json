@@ -9,6 +9,7 @@
 		"removeComments": false,
 		"lib": ["DOM", "ESNext"],
 		"paths": {
+			"diary": ["src/index.ts"],
 			"diary/*": ["src/*"]
 		}
 	},

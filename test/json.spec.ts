@@ -1,5 +1,5 @@
 import * as assert from 'uvu/assert';
-import * as diary from '../src/diary';
+import * as diary from '../src';
 import * as json from '../src/json';
 import { describe, trap_console } from './helpers';
 
