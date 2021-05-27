@@ -1,6 +1,4 @@
-process.env.DEBUG = 'standard';
-// @ts-ignore
-process.env.ROARR_LOG = true; // for roarr
+// @ts-nocheck
 
 import { Suite } from 'benchmark';
 import bunyan from 'bunyan';
@@ -11,7 +9,7 @@ import ulog from 'ulog';
 import { Logger } from '@graphile/logger';
 import { equal } from 'uvu/assert';
 import winston from 'winston';
-import { diary, after } from '../src';
+import { diary } from '../src';
 
 const trap_console = (verb: keyof typeof console) => {
 	const old = console[verb];
@@ -64,11 +62,10 @@ global.ROARR.write = ROARR.write = () => {};
 (async function () {
 	await runner({
 		diary() {
-			const suite = diary('standard');
 			let events: any[] = [];
-			after((logEvent) => {
+			const suite = diary('standard', (logEvent) => {
 				events.push(logEvent);
-			}, suite);
+			});
 			suite.info('info message');
 			return events;
 		},

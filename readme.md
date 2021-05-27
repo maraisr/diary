@@ -21,7 +21,6 @@
 - Outstanding [performance](#-benchmark)
 - Support for [`debug`'s filter](https://www.npmjs.com/package/debug#wildcards)
 - Browser compatible through `localStorage`
-- Middleware to pipe into Sentry or alike
 
 ## ⚙️ Install
 
@@ -32,18 +31,17 @@ npm add diary
 ## 🚀 Usage
 
 ```ts
-import { info, diary, after } from 'diary';
-
-after((logEvent) => {
-  if (logEvent.level === 'error') {
-    Sentry.captureException(logEvent.extra[0]);
-  }
-});
+import { info, diary } from 'diary';
 
 info('this important thing happened');
 // ~> ℹ info  this important thing happened
 
-const scopedDiary = diary('my-module');
+const scopedDiary = diary('my-module', (event) => {
+  if (event.level === 'error') {
+    Sentry.captureException(event.error);
+  }
+});
+
 scopedDiary.info('this other important thing happened');
 // ~> ℹ info  [my-module] this other important thing happened
 ```
@@ -87,9 +85,34 @@ scopeB2.info('message'); // will log ✔
 
 > `$ DEBUG=scopeA:two,scopeB:* node example.js`
 
+#### _programmatic_
+
+```ts
+import { diary, enable } from 'diary';
+
+enable('scopeA:two,scopeB:*');
+
+const scopeA1 = diary('scopeA:one');
+const scopeA2 = diary('scopeA:two');
+const scopeB1 = diary('scopeB:one');
+const scopeB2 = diary('scopeB:two');
+
+scopeA1.info('message'); // won't log ✗
+scopeA2.info('message'); // will log ✔
+scopeB1.info('message'); // will log ✔
+scopeB2.info('message'); // will log ✔
+
+enable('scopeA:*');
+
+scopeA1.info('message'); // will log ✔
+scopeA2.info('message'); // will log ✔
+scopeB1.info('message'); // won't log ✗
+scopeB2.info('message'); // won't log ✗
+```
+
 ## 🔎 API
 
-### diary(name: string)
+### diary(name: string, onEmit?: Reporter)
 
 Returns: [log functions](#log-functions)
 
@@ -110,18 +133,37 @@ Returns: [log functions](#log-functions)
 
 Type: `string`
 
-The name given to this _diary_, will appear in the middleware under the `name` property as well as in console messages.
+The name given to this _diary_—and will also be available in all logEvents.
+
+#### onEmit <small>(optional)</small>
+
+Type: `Reporter`
+
+A reporter is run on every log message (provided its [enabled](#enablequery-string)). A reporter gets given the
+`LogEvent` interface:
+
+```ts
+interface LogEvent {
+  name: string;
+  level: LogLevels;
+
+  message: string;
+  extra: unknown[];
+}
+```
+
+Errors (for `error` and `fatal`) there is also an `error: Error` property.
 
 ### _log functions_
 
 A set of functions that map to `console.error`, `console.warn`, `console.debug`, `console.info` and `console.info`.
 Aptly named;
 
-- `fatal(message: string|Error, ...extra: any[])`
-- `error(message: string|Error, ...extra: any[])`
+- `fatal(message: string | Error, ...extra: any[])`
+- `error(message: string | Error, ...extra: any[])`
 
-  If an `Error` instance is sent, the error object will be accessible through the first item in the `extra`'s array in a
-  middleware. This is for both `fatal` and `error`.
+  If an `Error` instance is sent, the error object will be accessible with the `error` property on the context, this is
+  for both `fatal` and `error`.
 
 - `warn(message: string, ...extra: any[])`
 - `debug(message: string, ...extra: any[])`
@@ -131,95 +173,17 @@ Aptly named;
 All `extra` parameters are simply spread onto the console function, so node/browser's built-in formatters will format
 any objects etc.
 
-## {before,after}(callback: function, diary?: Diary)
-
-Returns: `Dispose`
-
-Middlewares are function handlers that run for every [log function](#log-functions). They allow for modifying the log
-event object, or simply returning `false` to bailout. Executing in a _forwards_ direction, meaning middlewares will be
-run sequentially as they were defined.
-
-When the return is called, it will remove the middleware from the diary instance.
-
-#### handler
-
-Type: `Function`
-
-Which gets given a single argument of:
-
-```ts
-interface LogEvent {
-  name: string;
-  level: LogLevels;
-  message: string;
-  extra: unknown[];
-}
-```
-
-<details>
-<summary>Example</summary>
-
-```ts
-import { before, after, info } from 'diary';
-
-before((logEvent) => {
-  logEvent.context = {
-    hello: 'world',
-  };
-});
-
-after((logEvent) => {
-  if (logEvent.level === 'error') {
-    fetch('/api/errors', {
-      method: 'POST',
-      body: JSON.stringify({
-        error: logEvent.extra[0],
-        context: logEvent.context,
-      }),
-    });
-  }
-});
-
-info('something informative');
-```
-
-> This method isn't a Promise, so won't be awaited. It's a fire and forget kinda deal.
-
-</details>
-
-#### diary (optional)
+#### diary <small>(optional)</small>
 
 Type: `Diary`
 
 The result of a calling [diary](#diary-name-string);
 
-A middleware without the optional second parameter, will run for all diaries.
+### enable(query: string)
 
-### setLevel(level: LogLevel)
+Type: `Function`
 
-Returns: `void`
-
-Sets the level form which log's will get output to the console.
-
-#### level
-
-Type: `string`
-
-One of the [log functions](#log-functions)'s name.
-
-<details>
-<summary>Example</summary>
-
-```ts
-import { setLevel, info } from 'diary';
-setLevel('error');
-
-info('something informative');
-```
-
-</details>
-
-> Note; this will also filter the events from all middlewares.
+Opts certain log messages into being output. See more [here](#programmatic).
 
 ## 💨 Benchmark
 
@@ -235,17 +199,17 @@ Validation
 ✔ winston
 
 Benchmark
-  @graphile/logger     x 21,464,898 ops/sec ±0.70% (91 runs sampled)
-  bunyan               x 118,121 ops/sec ±0.75% (87 runs sampled)
-  debug                x 231,880 ops/sec ±2.98% (88 runs sampled)
-  diary                x 696,904 ops/sec ±4.16% (78 runs sampled)
-  pino                 x 49,684 ops/sec ±2.32% (89 runs sampled)
-  roarr                x 1,102,717 ops/sec ±1.37% (90 runs sampled)
-  ulog                 x 23,496 ops/sec ±21.35% (20 runs sampled)
-  winston              x 11,008 ops/sec ±11.58% (75 runs sampled)
+  @graphile/logger     x 21,801,529 ops/sec ±0.88% (93 runs sampled)
+  bunyan               x 109,073 ops/sec ±0.71% (94 runs sampled)
+  debug                x 228,734 ops/sec ±1.28% (88 runs sampled)
+  diary                x 6,962,434 ops/sec ±0.50% (93 runs sampled)
+  pino                 x 48,998 ops/sec ±0.93% (91 runs sampled)
+  roarr                x 927,402 ops/sec ±0.64% (94 runs sampled)
+  ulog                 x 25,681 ops/sec ±27.59% (17 runs sampled)
+  winston              x 12,314 ops/sec ±5.01% (83 runs sampled)
 ```
 
-> Ran with Node v16.0.0
+> Ran with Node v16.2.0
 
 ## License
 
