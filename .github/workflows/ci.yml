@@ -53,9 +53,6 @@ jobs:
       - name: Check Types
         run: pnpm run typecheck
 
-      - name: Benchmark
-        run: pnpm run bench
-
       - name: Report
         if: matrix.nodejs >= 16
         run: |-
