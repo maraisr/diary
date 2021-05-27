@@ -8,19 +8,24 @@ type ErrorLevels = Extract<LogLevels, 'fatal' | 'error'>;
 
 export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFn> & Record<ErrorLevels, LogFnAsError>;
 
-export interface LogEvent {
+type LogEventBase = {
 	name: string;
 	level: LogLevels;
 
 	message: string;
 	extra: unknown[];
+	error: never;
 
 	[other: string]: any;
 }
 
+export type LogEvent =
+	| { level: 'error', error: Error } & Omit<LogEventBase, 'error'>
+	| { level: 'fatal', error: Error } & Omit<LogEventBase, 'error'>
+	| LogEventBase;
+
 const is_node = typeof process < 'u' && typeof process.stdout < 'u';
 
-// read `localstorage`/`env` for scope "name"s allowed to log
 const to_reg_exp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 let allows: RegExp[];
 
@@ -49,6 +54,7 @@ export const enable = (allows_query: string) => {
 	allows = allows_query.split(/[\s,]+/).map(to_reg_exp);
 };
 
+// read `localstorage`/`env` for scope "name"s allowed to log
 enable((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || 'a^');
 
 // ~ Logger
@@ -65,16 +71,17 @@ function logger(
 	// is this "scope" allowed to log?
 	while (len-- > 0) {
 		if (allows[len].test(name)) {
+			const log_event = {
+				name, level, extra,
+				message: message as string,
+			} as LogEvent;
+
 			if ((level === 'error' || level === 'fatal') && message instanceof Error) {
-				extra.unshift(message);
-				message = message.message;
+				log_event.error = message;
+				log_event.message = message.message;
 			}
 
-			return reporter({
-				name, level,
-				message: message as string,
-				extra
-			});
+			return reporter(log_event);
 		}
 	}
 }

@@ -9,6 +9,7 @@ describe('api', (it) => {
 	it('exports', () => {
 		[...levels, 'diary'].forEach((verb) => {
 			assert.type(
+				// @ts-ignore
 				diary[verb],
 				'function',
 				`Expected diary to have #${verb} function`,
@@ -36,7 +37,7 @@ describe('api', (it) => {
 		const trap = trap_console('error');
 		scope.error(new Error('some error'));
 		assert.equal(events[0].message, 'some error');
-		assert.instance(events[0].extra[0], Error);
+		assert.instance(events[0].error, Error);
 		trap();
 	});
 });
@@ -87,7 +88,7 @@ levels.forEach((level) => {
 
 		it('should log something', () => {
 			let events: any[] = [];
-			const scope = diary.diary(level,(logEvent) => {
+			const scope = diary.diary(level, (logEvent) => {
 				events.push(logEvent);
 			});
 

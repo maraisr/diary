@@ -12,6 +12,7 @@ export const trap_console = (
 	const old = console[level];
 	console[level] = handler;
 
+	// @ts-ignore
 	return () => (console[level] = old);
 };
 

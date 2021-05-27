@@ -31,9 +31,9 @@ describe('output', (it) => {
 			result = args.join('');
 		});
 
-		const scope = diary.diary('json', event => {
+		const scope = diary.diary('json', (event) => {
 			event.context = { sequence: 0 };
-			json.reporter(event)
+			json.reporter(event);
 		});
 
 		scope.info('foo %s', 'bar');
