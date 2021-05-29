@@ -34,7 +34,14 @@
 	"main": "diary/index.js",
 	"unpkg": "diary/index.min.js",
 	"module": "diary/index.mjs",
-	"types": "types/index.d.ts",
+	"types": "index.d.ts",
+	"typesVersions": {
+		">=4": {
+			"*": [
+				"types/*"
+			]
+		}
+	},
 	"files": [
 		"types",
 		"diary",
