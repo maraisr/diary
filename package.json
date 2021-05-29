@@ -82,12 +82,12 @@
 		"@marais/tsconfig": "0.0.1",
 		"@types/node": "15.6.1",
 		"cross-env": "7.0.3",
-		"esbuild": "0.12.2",
+		"esbuild": "0.12.5",
 		"prettier": "2.3.0",
 		"ts-eager": "2.0.2",
 		"tsconfig-paths": "3.9.0",
 		"tslib": "2.2.0",
-		"typescript": "4.2.4",
+		"typescript": "4.3.2",
 		"uvu": "0.5.1"
 	},
 	"volta": {

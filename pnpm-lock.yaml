@@ -4,24 +4,24 @@ specifiers:
   '@marais/tsconfig': 0.0.1
   '@types/node': 15.6.1
   cross-env: 7.0.3
-  esbuild: 0.12.2
+  esbuild: 0.12.5
   prettier: 2.3.0
   ts-eager: 2.0.2
   tsconfig-paths: 3.9.0
   tslib: 2.2.0
-  typescript: 4.2.4
+  typescript: 4.3.2
   uvu: 0.5.1
 
 devDependencies:
   '@marais/tsconfig': 0.0.1
   '@types/node': 15.6.1
   cross-env: 7.0.3
-  esbuild: 0.12.2
+  esbuild: 0.12.5
   prettier: 2.3.0
   ts-eager: 2.0.2
   tsconfig-paths: 3.9.0
   tslib: 2.2.0
-  typescript: 4.2.4
+  typescript: 4.3.2
   uvu: 0.5.1
 
 packages:
@@ -75,8 +75,8 @@ packages:
     requiresBuild: true
     dev: true
 
-  /esbuild/0.12.2:
-    resolution: {integrity: sha512-VELu6ndrs0CWMV+Ts8GwO3S08JsFFrEuHCo8ekfqNAv/rHEK4UjoXvZOFyopHvRvQVsbTvqQWfBzYKVeLBm0WA==}
+  /esbuild/0.12.5:
+    resolution: {integrity: sha512-vcuP53pA5XiwUU4FnlXM+2PnVjTfHGthM7uP1gtp+9yfheGvFFbq/KyuESThmtoHPUrfZH5JpxGVJIFDVD1Egw==}
     hasBin: true
     requiresBuild: true
     dev: true
@@ -180,8 +180,8 @@ packages:
     resolution: {integrity: sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==}
     dev: true
 
-  /typescript/4.2.4:
-    resolution: {integrity: sha512-V+evlYHZnQkaz8TRBuxTA92yZBPotr5H+WhQ7bD3hZUndx5tGOa1fuCgeSjxAzM1RiN5IzvadIXTVefuuwZCRg==}
+  /typescript/4.3.2:
+    resolution: {integrity: sha512-zZ4hShnmnoVnAHpVHWpTcxdv7dWP60S2FsydQLV8V5PbS3FifjWFFRiHSWpDJahly88PRyV5teTSLoq4eG7mKw==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
