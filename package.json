@@ -35,13 +35,6 @@
 	"unpkg": "diary/index.min.js",
 	"module": "diary/index.mjs",
 	"types": "types/index.d.ts",
-	"typesVersions": {
-		"*": {
-			"*": [
-				"types/*"
-			]
-		}
-	},
 	"files": [
 		"types",
 		"diary",
