@@ -110,8 +110,6 @@ const default_reporter: Reporter = (event) => {
 /**
  * Creates a new diary logging instance.
  *
- * Note: Giving this the same name as a previous diary instance will not inherit it's middleware.
- *
  * @example
  * ```ts
  * import { diary } from 'diary';
