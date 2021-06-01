@@ -144,3 +144,4 @@ export const warn = default_diary.warn;
 export const debug = default_diary.debug;
 export const info = default_diary.info;
 export const log = default_diary.log;
+export const defaultReporter = default_reporter;
