@@ -1,5 +1,5 @@
 import * as assert from 'uvu/assert';
-import { sprintf } from '../src/utils';
+import { sprintf, compare } from '../src/utils';
 import { describe } from './helpers';
 
 describe('sprintf', (it) => {
@@ -42,5 +42,31 @@ describe('sprintf', (it) => {
 
 	it('should work, when over supplied', () => {
 		assert.equal(sprintf('foo %s', 'bar', 'baz'), 'foo bar');
+	});
+});
+
+describe('compare', (it) => {
+	it('should compare when equal', () => {
+		assert.equal(compare('log', 'log'), 0);
+		assert.equal(compare('error', 'error'), 0);
+	});
+
+	it('should compare when less', () => {
+		assert.equal(compare('error', 'fatal'), -1);
+		assert.equal(compare('warn', 'error'), -1);
+	});
+
+	it('should compare when more', () => {
+		assert.equal(compare('fatal', 'error'), 1);
+		assert.equal(compare('info', 'log'), 1);
+	});
+
+	it('show be zero when level is _real_', () => {
+		// @ts-ignore
+		assert.equal(compare('what the', 'log'), 0);
+		// @ts-ignore
+		assert.equal(compare('what the', 'heck'), 0);
+		// @ts-ignore
+		assert.equal(compare('log', 'heck'), 0);
 	});
 });
