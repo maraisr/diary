@@ -54,7 +54,7 @@ jobs:
         run: pnpm run typecheck
 
       - name: Report
-        if: matrix.nodejs >= 16
+        if: matrix.node >= 16
         run: |-
           nyc report --reporter=text-lcov > coverage.lcov;
           bash <(curl -s https://codecov.io/bash);
