@@ -37,9 +37,7 @@ jobs:
         run: lz4 -d /tmp/pnpmstore | tar -xf - ;
 
       - name: Install
-        run: |-
-          pnpm install
-          pnpm i -g nyc@13
+        run: pnpm install
 
       - name: (env) prepare cache
         run: tar -cf - ~/.pnpm-store | lz4 > /tmp/pnpmstore
@@ -47,14 +45,23 @@ jobs:
       - name: Compiles
         run: pnpm run build
 
-      - name: Test w/ Coverage
-        run: nyc --include=src pnpm test
+      - name: (coverage) Install
+        if: matrix.node >= 16
+        run: pnpm i -g c8
+
+      - name: Test
+        if: matrix.node < 16
+        run: npm test
+
+      - name: (coverage) Test
+        if: matrix.node >= 16
+        run: c8 --include=src pnpm test
 
       - name: Check Types
         run: pnpm run typecheck
 
-      - name: Report
+      - name: (coverage) Report
         if: matrix.node >= 16
         run: |-
-          nyc report --reporter=text-lcov > coverage.lcov;
-          bash <(curl -s https://codecov.io/bash);
+          c8 report --reporter=text-lcov > coverage.lcov
+          bash <(curl -s https://codecov.io/bash)
