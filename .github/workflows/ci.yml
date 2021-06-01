@@ -39,7 +39,7 @@ jobs:
       - name: Install
         run: |-
           pnpm install
-          pnpm i -g nyc
+          pnpm i -g nyc@13
 
       - name: (env) prepare cache
         run: tar -cf - ~/.pnpm-store | lz4 > /tmp/pnpmstore

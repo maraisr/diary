@@ -53,7 +53,7 @@
 		"build": "node bin/build && tsc --declaration true --emitDeclarationOnly --outDir types --rootDir src --noEmit false",
 		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
 		"prepublishOnly": "pnpm run build",
-		"test": "cross-env DEBUG=* TS_NODE_PROJECT=tsconfig.test.json uvu -r ts-eager/register -i helpers.ts test",
+		"test": "cross-env TS_NODE_PROJECT=tsconfig.test.json uvu -r ts-eager/register -i helpers.ts test",
 		"typecheck": "tsc --noEmit"
 	},
 	"prettier": {
