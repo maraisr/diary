@@ -46,6 +46,8 @@ scopedDiary.info('this other important thing happened');
 // ~> ℹ info  [my-module] this other important thing happened
 ```
 
+
+
 Controlling runtime emission of logs:
 
 ### _browser_
@@ -110,11 +112,36 @@ scopeB1.info('message'); // won't log ✗
 scopeB2.info('message'); // won't log ✗
 ```
 
+## Inheritance
+
+```ts
+import { diary, defaultReporter } from 'diary';
+import { compare } from 'diary/utils';
+import { LogEvent } from './index';
+
+// you can combine this with localStorage or env variables to allow for configurable project-wide loglevels
+const ignoreBelowWarning = (event: LogEvent) => {
+	if (compare(event.level, "warning") > 0) {
+		defaultReporter(event);
+	}
+}
+
+const rootDiary = diary('my-project', ignoreBelowWarning);
+const scopedDiary = rootDiary.diary('scopedDiary');
+
+
+// the scope of scopedDiary is my-project:scopedDiary
+// it inherits the Reporter from its parent
+// you can also overwrite the reporter:
+
+const scopedDiaryWithCustomReporter = rootDiary.diary('scopedDiaryB', (event: LogEvent) => {/* do something else */});
+
+```
 ## 🔎 API
 
 ### diary(name: string, onEmit?: Reporter)
 
-Returns: [log functions](#log-functions)
+Returns: [log functions](#log-functions) + itself
 
 > A default diary is exported, accessible through simply importing any [log function](#log-functions).
 >
@@ -134,6 +161,8 @@ Returns: [log functions](#log-functions)
 Type: `string`
 
 The name given to this _diary_—and will also be available in all logEvents.
+If called from the result of another `diary()` call, this is automatically
+prefixed by that diary's name (see [inheritance](#inheritance)).
 
 #### onEmit <small>(optional)</small>
 
@@ -141,6 +170,8 @@ Type: `Reporter`
 
 A reporter is run on every log message (provided its [enabled](#enablequery-string)). A reporter gets given the
 `LogEvent` interface:
+
+If called from the result of another `diary()` call, this inherits that diary's onEmit argument. (see [inheritance](#inheritance))
 
 ```ts
 interface LogEvent {
