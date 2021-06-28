@@ -1,6 +1,6 @@
 import * as assert from 'uvu/assert';
 import * as diary from '../src';
-import { enable } from '../src';
+import { enable, LogEvent } from '../src';
 import { describe, trap_console } from './helpers';
 
 const levels = ['fatal', 'error', 'warn', 'debug', 'info', 'log'] as const;
@@ -71,6 +71,54 @@ describe('allows', (it) => {
 		assert.equal(events, ['info a', 'info b']);
 
 		enable('*');
+	});
+});
+
+describe('inherits', (it) => {
+	it('should inherit the scope', () => {
+		const events = [];
+		const eventReporter = (event: LogEvent) => {
+			events.push(event);
+		};
+		const trap = trap_console('info');
+		const scopeA = diary.diary('scopeA', eventReporter);
+		const childScope = scopeA.diary('childScope', eventReporter);
+
+		childScope.info('info childScope');
+
+		assert.equal(events[0].name, 'scopeA:childScope');
+		trap();
+	});
+
+	it('should inherit the reporter', () => {
+		const events = [];
+		const eventReporter = (event: LogEvent) => {
+			events.push(event);
+		};
+		const trap = trap_console('info');
+		const scopeA = diary.diary('scopeA', eventReporter);
+		const childScope = scopeA.diary('childScope');
+
+		childScope.info('info childScope');
+
+		assert.equal(events.length, 1);
+		trap();
+	});
+
+	it('should overwrite the reporter', () => {
+		const events = [];
+		const eventReporter = (event: LogEvent) => {
+			events.push(event);
+		};
+		const noopReporter = (event: LogEvent) => {};
+		const trap = trap_console('info');
+		const scopeA = diary.diary('scopeA', eventReporter);
+		const childScope = scopeA.diary('childScope', noopReporter);
+
+		childScope.info('info childScope');
+
+		assert.equal(events.length, 0);
+		trap();
 	});
 });
 

@@ -2,11 +2,14 @@ export type Reporter = (event: LogEvent) => void;
 
 type LogFn = (message?: string, ...args: unknown[]) => void;
 type LogFnAsError = (message?: string | Error, ...args: unknown[]) => void;
+type DiaryFn = (name: string, onEmit?: Reporter) => Diary;
 
 export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
 type ErrorLevels = Extract<LogLevels, 'fatal' | 'error'>;
 
-export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFn> & Record<ErrorLevels, LogFnAsError>;
+export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFn>
+	& Record<ErrorLevels, LogFnAsError>
+	& {diary: DiaryFn};
 
 type LogEventBase = {
 	name: string;
@@ -133,6 +136,7 @@ export function diary(name: string, onEmit?: Reporter): Diary {
 		debug: logger.bind(0, name, onEmit, 'debug'),
 		info: logger.bind(0, name, onEmit, 'info'),
 		log: logger.bind(0, name, onEmit, 'log'),
+		diary: (childName, childEmit?: Reporter) => diary(`${name}:${childName}`, childEmit ?? onEmit),
 	};
 }
 
