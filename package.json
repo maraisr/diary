@@ -52,7 +52,7 @@
 		"bench": "cross-env TS_NODE_PROJECT=tsconfig.test.json DEBUG=standard ROARR_LOG=true node -r ts-eager/register bench/index.ts",
 		"build": "node bin/build && tsc --declaration true --emitDeclarationOnly --outDir types --rootDir src --noEmit false",
 		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
-		"prepublishOnly": "pnpm run build",
+		"prepare": "pnpm run build",
 		"test": "cross-env TS_NODE_PROJECT=tsconfig.test.json uvu -r ts-eager/register -i helpers.ts test",
 		"typecheck": "tsc --noEmit"
 	},
