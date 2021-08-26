@@ -1,11 +1,12 @@
 {
 	"extends": "@marais/tsconfig",
 	"compilerOptions": {
-		"rootDir": "./",
+		"outDir": "types",
+		"noEmit": false,
+		"declaration": true,
+		"rootDir": "./src",
 		"baseUrl": ".",
-		"outDir": "dist",
 		"target": "ES2019",
-		"declaration": false,
 		"removeComments": false,
 		"lib": ["DOM", "ESNext"],
 		"paths": {

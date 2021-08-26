@@ -50,14 +50,12 @@
 	],
 	"scripts": {
 		"bench": "cross-env TS_NODE_PROJECT=tsconfig.test.json DEBUG=standard ROARR_LOG=true node -r ts-eager/register bench/index.ts",
-		"build": "node bin/build && tsc --declaration true --emitDeclarationOnly --outDir types --rootDir src --noEmit false",
-		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
+		"build": "node bin/build && tsc --emitDeclarationOnly",
+		"fmt": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
 		"test": "cross-env TS_NODE_PROJECT=tsconfig.test.json uvu -r ts-eager/register -i helpers.ts test",
 		"typecheck": "tsc --noEmit"
 	},
 	"prettier": {
-		"bracketSpacing": true,
-		"printWidth": 80,
 		"proseWrap": "always",
 		"singleQuote": true,
 		"tabWidth": 4,
@@ -77,7 +75,7 @@
 			}
 		]
 	},
-	"dependencies": {
+	"devDependencies": {
 		"@marais/tsconfig": "0.0.1",
 		"@types/node": "16.7.2",
 		"cross-env": "7.0.3",

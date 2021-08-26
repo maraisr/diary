@@ -2,8 +2,14 @@ name: CI
 
 on:
   push:
-    branches: [main]
-  pull_request: {}
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
   test:
@@ -45,23 +51,8 @@ jobs:
       - name: Compiles
         run: pnpm run build
 
-      - name: (coverage) Install
-        if: matrix.node >= 16
-        run: pnpm i -g c8
-
       - name: Test
-        if: matrix.node < 16
-        run: npm test
-
-      - name: (coverage) Test
-        if: matrix.node >= 16
-        run: c8 --include=src pnpm test
+        run: pnpm test
 
       - name: Check Types
         run: pnpm run typecheck
-
-      - name: (coverage) Report
-        if: matrix.node >= 16
-        run: |-
-          c8 report --reporter=text-lcov > coverage.lcov
-          bash <(curl -s https://codecov.io/bash)
