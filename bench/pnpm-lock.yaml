@@ -6,7 +6,7 @@ specifiers:
   benchmark: 2.1.4
   bunyan: 1.8.15
   debug: 4.3.2
-  pino: 6.13.0
+  pino: 6.13.1
   roarr: 4.2.5
   ulog: 2.0.0-beta.18
   winston: 3.3.3
@@ -17,7 +17,7 @@ dependencies:
   benchmark: 2.1.4
   bunyan: 1.8.15
   debug: 4.3.2
-  pino: 6.13.0
+  pino: 6.13.1
   roarr: 4.2.5
   ulog: 2.0.0-beta.18
   winston: 3.3.3
@@ -221,6 +221,10 @@ packages:
     resolution: {integrity: sha512-lXatBjf3WPjmWD6DpIZxkeSsCOwqI0maYMpgDlx8g4U2qi4lbjA9oH/HD2a87G+KfsUmo5WbJFmqBZlPxtptag==}
     dev: false
 
+  /fastify-warning/0.2.0:
+    resolution: {integrity: sha512-s1EQguBw/9qtc1p/WTY4eq9WMRIACkj+HTcOIK1in4MV5aFaQC9ZCIt0dJ7pr5bIf4lPpHvAtP2ywpTNgs7hqw==}
+    dev: false
+
   /fecha/4.2.1:
     resolution: {integrity: sha512-MMMQ0ludy/nBs1/o0zVOiKTpG7qMbonKUzjJgQFEuvq6INZ1OraKPRAWkBq5vlKLOUMpmNYG1JoN3oDPUQ9m3Q==}
     dev: false
@@ -392,12 +396,13 @@ packages:
     resolution: {integrity: sha512-EqX4pwDPrt3MuOAAUBMU0Tk5kR/YcCM5fNPEzgCO2zJ5HfX0vbiH9HbJglnyeQsN96Kznae6MWD47pZB5avTrg==}
     dev: false
 
-  /pino/6.13.0:
-    resolution: {integrity: sha512-mRXSTfa34tbfrWqCIp1sUpZLqBhcoaGapoyxfEwaWwJGMpLijlRdDKIQUyvq4M3DUfFH5vEglwSw8POZYwbThA==}
+  /pino/6.13.1:
+    resolution: {integrity: sha512-QQf67BU+cANnc/2U+wzUV20UjO5oBryWpnNyKshdLfT9BdeiXlh9wxLGmOjAuBWMYITdMs+BtJSQQNlGRNbWpA==}
     hasBin: true
     dependencies:
       fast-redact: 3.0.1
       fast-safe-stringify: 2.0.8
+      fastify-warning: 0.2.0
       flatstr: 1.0.12
       pino-std-serializers: 3.2.0
       quick-format-unescaped: 4.0.3
