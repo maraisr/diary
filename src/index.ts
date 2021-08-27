@@ -24,8 +24,6 @@ export type LogEvent =
 	| { level: 'fatal', error: Error } & Omit<LogEventBase, 'error'>
 	| LogEventBase;
 
-const is_node = typeof process < 'u' && typeof process.stdout < 'u';
-
 const to_reg_exp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 let allows: RegExp[];
 
@@ -55,7 +53,16 @@ export const enable = (allows_query: string) => {
 };
 
 // read `localstorage`/`env` for scope "name"s allowed to log
-enable((is_node ? process.env.DEBUG : localStorage.getItem('DEBUG')) || 'a^');
+enable(
+	(__TARGET__ === 'node'
+		? process.env.DEBUG
+		: __TARGET__ === 'browser'
+		? localStorage.getItem('DEBUG')
+		: __TARGET__ === 'worker'
+		? DEBUG
+		: null
+	) || 'a^',
+);
 
 // ~ Logger
 
@@ -99,7 +106,7 @@ const loglevel_strings: Record<LogLevels, string> = {
 
 const default_reporter: Reporter = (event) => {
 	let label = '';
-	if (is_node) label = `${loglevel_strings[event.level]} `;
+	if (__TARGET__ === 'node' || __TARGET__ === 'worker') label = `${loglevel_strings[event.level]} `;
 	if (event.name) label += `[${event.name}] `;
 
 	console[event.level === 'fatal' ? 'error' : event.level](label + event.message, ...event.extra);
@@ -119,8 +126,8 @@ const default_reporter: Reporter = (event) => {
  * log.info('app has started');
  * ```
  *
- * @param name A name to give this diary instance this can be unique to your application, or not. When logged, it'll
- *     exist after the level string, eg: `ℹ info [my-fancy-app] app has started`
+ * @param name A name to give this diary instance this can be unique to your application, or not.
+ *     When logged, it'll exist after the level string, eg: `ℹ info [my-fancy-app] app has started`
  * @param onEmit The reporter that handles the output of the log messages
  */
 export function diary(name: string, onEmit?: Reporter): Diary {

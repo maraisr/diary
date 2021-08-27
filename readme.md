@@ -48,25 +48,7 @@ scopedDiary.info('this other important thing happened');
 
 Controlling runtime emission of logs:
 
-### _browser_
-
-```ts
-import { diary } from 'diary';
-
-localStorage.setItem('DEBUG', 'scopeA:two,scopeB:*');
-
-const scopeA1 = diary('scopeA:one');
-const scopeA2 = diary('scopeA:two');
-const scopeB1 = diary('scopeB:one');
-const scopeB2 = diary('scopeB:two');
-
-scopeA1.info('message'); // won't log ✗
-scopeA2.info('message'); // will log ✔
-scopeB1.info('message'); // will log ✔
-scopeB2.info('message'); // will log ✔
-```
-
-#### _node_
+For the code:
 
 ```ts
 // example.js
@@ -83,7 +65,27 @@ scopeB1.info('message'); // will log ✔
 scopeB2.info('message'); // will log ✔
 ```
 
-> `$ DEBUG=scopeA:two,scopeB:* node example.js`
+### _browser_
+
+```ts
+localStorage.setItem('DEBUG', 'scopeA:two,scopeB:*');
+
+// then your scripts
+```
+
+> 💡 Tip - Set this via the DevTools, then hit refresh. Saves you having to re-bundle.
+
+#### _node_
+
+```sh
+DEBUG=scopeA:two,scopeB:* node example.js
+```
+
+#### _workers_
+
+Create an [Environment Variable](https://developers.cloudflare.com/workers/platform/environments) with `DEBUG`.
+
+> ⚠️ Specifically referencing the Cloudflare Workers
 
 #### _programmatic_
 
