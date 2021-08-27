@@ -46,9 +46,7 @@ scopedDiary.info('this other important thing happened');
 // ~> ℹ info  [my-module] this other important thing happened
 ```
 
-Controlling runtime emission of logs:
-
-For the code:
+Controlling runtime emission of logs, using the code below as an example:
 
 ```ts
 // example.js
@@ -65,7 +63,7 @@ scopeB1.info('message'); // will log ✔
 scopeB2.info('message'); // will log ✔
 ```
 
-### _browser_
+#### _browser_
 
 ```ts
 localStorage.setItem('DEBUG', 'scopeA:two,scopeB:*');
