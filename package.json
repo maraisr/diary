@@ -18,8 +18,16 @@
 	"sideEffects": false,
 	"exports": {
 		".": {
-			"import": "./diary/index.mjs",
-			"require": "./diary/index.js"
+			"worker": {
+				"import": "./diary/worker/index.mjs",
+				"require": "./diary/worker/index.js"
+			},
+			"browser": {
+				"import": "./diary/browser/index.mjs",
+				"require": "./diary/browser/index.js"
+			},
+			"import": "./diary/node/index.mjs",
+			"require": "./diary/node/index.js"
 		},
 		"./json": {
 			"import": "./json/index.mjs",
@@ -52,7 +60,7 @@
 		"bench": "cross-env TS_NODE_PROJECT=tsconfig.test.json DEBUG=standard ROARR_LOG=true node -r ts-eager/register bench/index.ts",
 		"build": "node bin/build && tsc --emitDeclarationOnly",
 		"fmt": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
-		"test": "cross-env TS_NODE_PROJECT=tsconfig.test.json uvu -r ts-eager/register -i helpers.ts test",
+		"test": "cross-env TS_NODE_PROJECT=tsconfig.test.json uvu -r ts-eager/register -r test/setup.js -i helpers.ts -i setup.js test",
 		"typecheck": "tsc --noEmit"
 	},
 	"prettier": {
