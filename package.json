@@ -47,6 +47,9 @@
 		">=3.4": {
 			"*": [
 				"types/*"
+			],
+			"index.d.ts": [
+				"types/index.d.ts"
 			]
 		}
 	},
