@@ -2,26 +2,26 @@ lockfileVersion: 5.3
 
 specifiers:
   '@marais/tsconfig': 0.0.1
-  '@types/node': 16.7.2
+  '@types/node': 16.9.1
   cross-env: 7.0.3
-  esbuild: 0.12.23
-  prettier: 2.3.2
+  esbuild: 0.12.28
+  prettier: 2.4.0
   ts-eager: 2.0.2
   tsconfig-paths: 3.11.0
   tslib: 2.3.1
-  typescript: 4.3.5
+  typescript: 4.4.3
   uvu: 0.5.1
 
 devDependencies:
   '@marais/tsconfig': 0.0.1
-  '@types/node': 16.7.2
+  '@types/node': 16.9.1
   cross-env: 7.0.3
-  esbuild: 0.12.23
-  prettier: 2.3.2
+  esbuild: 0.12.28
+  prettier: 2.4.0
   ts-eager: 2.0.2
   tsconfig-paths: 3.11.0
   tslib: 2.3.1
-  typescript: 4.3.5
+  typescript: 4.4.3
   uvu: 0.5.1
 
 packages:
@@ -34,8 +34,8 @@ packages:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
     dev: true
 
-  /@types/node/16.7.2:
-    resolution: {integrity: sha512-TbG4TOx9hng8FKxaVrCisdaxKxqEwJ3zwHoCWXZ0Jw6mnvTInpaB99/2Cy4+XxpXtjNv9/TgfGSvZFyfV/t8Fw==}
+  /@types/node/16.9.1:
+    resolution: {integrity: sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==}
     dev: true
 
   /buffer-from/1.1.2:
@@ -75,8 +75,8 @@ packages:
     requiresBuild: true
     dev: true
 
-  /esbuild/0.12.23:
-    resolution: {integrity: sha512-qvS4aKnmKikoWGscd5lVAzgobMovlH/JhaWitRiQ8xJx0x1Fym0pqVjMFs43Nvff8WpibeWm+fWoLK88T1U0Xw==}
+  /esbuild/0.12.28:
+    resolution: {integrity: sha512-pZ0FrWZXlvQOATlp14lRSk1N9GkeJ3vLIwOcUoo3ICQn9WNR4rWoNi81pbn6sC1iYUy7QPqNzI3+AEzokwyVcA==}
     hasBin: true
     requiresBuild: true
     dev: true
@@ -111,8 +111,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /prettier/2.3.2:
-    resolution: {integrity: sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ==}
+  /prettier/2.4.0:
+    resolution: {integrity: sha512-DsEPLY1dE5HF3BxCRBmD4uYZ+5DCbvatnolqTqcxEgKVZnL2kUfyu7b8pPQ5+hTBkdhU9SLUmK0/pHb07RE4WQ==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
@@ -180,8 +180,8 @@ packages:
     resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
     dev: true
 
-  /typescript/4.3.5:
-    resolution: {integrity: sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==}
+  /typescript/4.4.3:
+    resolution: {integrity: sha512-4xfscpisVgqqDfPaJo5vkd+Qd/ItkoagnHpufr+i2QCHBsNYp+G7UAoyFl8aPtx879u38wPV65rZ8qbGZijalA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
