@@ -1,6 +1,6 @@
 {
 	"name": "diary",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Fast logging library for both Node and Browser.",
 	"keywords": [
 		"fast",
