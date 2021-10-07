@@ -9,7 +9,7 @@ import ulog from 'ulog';
 import { Logger } from '@graphile/logger';
 import { equal } from 'uvu/assert';
 import winston from 'winston';
-import { diary } from '../src';
+import { diary } from '../diary/node';
 
 const trap_console = (verb: keyof typeof console) => {
 	const old = console[verb];
@@ -20,13 +20,11 @@ const trap_console = (verb: keyof typeof console) => {
 trap_console('info');
 
 async function runner(candidates: Record<string, Function>) {
-	const bench = new Suite().on('cycle', (e) => {
-		console.log('  ' + e.target);
-	});
-
 	const sorted_candidates = Object.entries(candidates).sort(([a], [b]) =>
 		a.localeCompare(b),
 	);
+
+	// ~ Check loggers to samey things
 
 	console.log('\nValidation');
 	for (const [name, fn] of sorted_candidates) {
@@ -41,119 +39,122 @@ async function runner(candidates: Record<string, Function>) {
 		}
 	}
 
+	// ~ Benchmarking
+
+	const suite = new Suite();
+	const previous = suite.add.bind(suite);
+	suite.on('cycle', (e) => console.log('  ' + e.target));
+	suite.add = (name, runner) => previous(name.padEnd(20), runner);
+
 	console.log('\nBenchmark');
 	const trap = trap_console('log');
 	for (const [name, fn] of sorted_candidates) {
-		bench.add(name.padEnd(20), {
-			fn,
-		});
+		suite.add(name, fn);
 	}
 	trap();
 
 	return new Promise((resolve) => {
-		bench.on('complete', resolve);
-		bench.run();
+		suite.on('complete', resolve);
+		suite.run();
 	});
 }
 
 // @ts-ignore
 global.ROARR.write = ROARR.write = () => {};
 
-(async function () {
-	await runner({
-		diary() {
-			let events: any[] = [];
-			const suite = diary('standard', (logEvent) => {
-				events.push(logEvent);
-			});
-			suite.info('info message');
-			return events;
-		},
-		ulog() {
-			let events: any[] = [];
-			ulog.use([
-				{
-					outputs: {
-						custom: {
-							log(...args) {
-								events.push(args);
-							},
+runner({
+	diary() {
+		let events: any[] = [];
+		const suite = diary('standard', (logEvent) => {
+			events.push(logEvent);
+		});
+		suite.info('info message');
+		return events;
+	},
+	ulog() {
+		let events: any[] = [];
+		ulog.use([
+			{
+				outputs: {
+					custom: {
+						log(...args) {
+							events.push(args);
 						},
 					},
 				},
-			]);
-			const suite = ulog('standard');
-			suite.output = 'custom';
-			suite.info('info message');
-			return events;
-		},
-		roarr() {
-			let events: any[] = [];
-			const suite = roarr.child((message) => {
-				events.push(message);
-				return message;
-			});
-			suite.info('info message');
-			return events;
-		},
-		bunyan() {
-			let events: any[] = [];
-			const suite = bunyan.createLogger({
-				name: 'standard',
-				stream: {
-					write(message) {
-						events.push(message);
-					},
-				},
-			});
-			suite.info('info message');
-			return events;
-		},
-		debug() {
-			const suite = debug('standard');
-			suite.enabled = true;
-			let events: any[] = [];
-			suite.log = (message) => {
-				events.push(message);
-			};
-			suite('info message');
-			return events;
-		},
-		pino() {
-			let events: any[] = [];
-			const suite = pino({
-				writable: true,
+			},
+		]);
+		const suite = ulog('standard');
+		suite.output = 'custom';
+		suite.info('info message');
+		return events;
+	},
+	roarr() {
+		let events: any[] = [];
+		const suite = roarr.child((message) => {
+			events.push(message);
+			return message;
+		});
+		suite.info('info message');
+		return events;
+	},
+	bunyan() {
+		let events: any[] = [];
+		const suite = bunyan.createLogger({
+			name: 'standard',
+			stream: {
 				write(message) {
 					events.push(message);
 				},
-			});
-			suite.info('info message');
-			return events;
-		},
-		winston() {
-			let events: any[] = [];
-			const suite = winston.createLogger({
-				transports: [
-					new winston.transports.Console({
-						log(info, next) {
-							events.push(info);
-							return next();
-						},
-					}),
-				],
-			});
-			suite.info('info message');
-			return events;
-		},
-		['@graphile/logger']() {
-			let events: any[] = [];
-			const logger = new Logger((scope) => {
-				return (level, message, meta) => {
-					events.push({ scope, level, message, meta });
-				};
-			});
-			logger.info('info message');
-			return events;
-		},
-	});
-})();
+			},
+		});
+		suite.info('info message');
+		return events;
+	},
+	debug() {
+		const suite = debug('standard');
+		suite.enabled = true;
+		let events: any[] = [];
+		suite.log = (message) => {
+			events.push(message);
+		};
+		suite('info message');
+		return events;
+	},
+	pino() {
+		let events: any[] = [];
+		const suite = pino({
+			writable: true,
+			write(message) {
+				events.push(message);
+			},
+		});
+		suite.info('info message');
+		return events;
+	},
+	winston() {
+		let events: any[] = [];
+		const suite = winston.createLogger({
+			transports: [
+				new winston.transports.Console({
+					log(info, next) {
+						events.push(info);
+						return next();
+					},
+				}),
+			],
+		});
+		suite.info('info message');
+		return events;
+	},
+	['@graphile/logger']() {
+		let events: any[] = [];
+		const logger = new Logger((scope) => {
+			return (level, message, meta) => {
+				events.push({ scope, level, message, meta });
+			};
+		});
+		logger.info('info message');
+		return events;
+	},
+});
