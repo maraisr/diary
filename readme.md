@@ -187,29 +187,34 @@ Opts certain log messages into being output. See more [here](#programmatic).
 
 ## 💨 Benchmark
 
+> via the [`/bench`](/bench) directory with Node v16.2.0
+
 ```
 Validation
-✔ @graphile/logger
-✔ bunyan
-✔ debug
-✔ diary
-✔ pino
-✔ roarr
-✔ ulog
-✔ winston
+  ✔ @graphile/logger
+  ✔ bunyan
+  ✔ debug
+  ✔ diary
+  ✔ pino
+  ✔ roarr
+  ✔ ulog
+  ✔ winston
 
 Benchmark
-  @graphile/logger     x 21,723,071 ops/sec ±1.31% (92 runs sampled)
-  bunyan               x    114,483 ops/sec ±0.87% (93 runs sampled)
-  debug                x    212,581 ops/sec ±2.08% (85 runs sampled)
-  diary                x  7,146,092 ops/sec ±0.83% (93 runs sampled)
-  pino                 x     49,869 ops/sec ±1.71% (90 runs sampled)
-  roarr                x    959,759 ops/sec ±0.84% (92 runs sampled)
-  ulog                 x     25,563 ops/sec ±26.34% (18 runs sampled)
-  winston              x     11,569 ops/sec ±11.90% (77 runs sampled)
+  @graphile/logger     x 20,198,944 ops/sec ±1.15% (89 runs sampled)
+  bunyan               x    120,302 ops/sec ±0.63% (94 runs sampled)
+  debug                x    211,486 ops/sec ±1.95% (88 runs sampled)
+  diary                x  6,682,958 ops/sec ±1.79% (90 runs sampled)
+  pino                 x     40,994 ops/sec ±2.15% (83 runs sampled)
+  roarr                x    812,015 ops/sec ±1.87% (84 runs sampled)
+  ulog                 x     24,878 ops/sec ±24.93% (19 runs sampled)
+  winston              x      9,499 ops/sec ±14.17% (67 runs sampled)
 ```
 
-> Ran with Node v16.2.0
+## Related
+
+- [workers-logger](https://github.com/maraisr/workers-logger) — fast and effective logging for
+  [Cloudflare Workers](https://workers.cloudflare.com/)
 
 ## License
 
