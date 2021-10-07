@@ -35,6 +35,11 @@ describe('sprintf', (it) => {
 	it('should work when under supplied', () => {
 		assert.equal(sprintf('foo %s %s', 'bar'), 'foo bar undefined');
 		assert.equal(
+			sprintf('foo %s with %o', 'bar', { bar: 'baz' }),
+			'foo bar with {"bar":"baz"}',
+		);
+		// assert.equal(sprintf('foo %s with %o', 'bar', {"bar":"baz"}, 'test'), 'foo bar with {"bar":"baz"} test');
+		assert.equal(
 			sprintf('foo %o %s', { bar: 'baz' }),
 			'foo {"bar":"baz"} undefined',
 		);
