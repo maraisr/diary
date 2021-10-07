@@ -25,7 +25,7 @@ async function bundle(input, files, env, neutral) {
 		const platform = is_neutral ? 'neutral' : ((env === 'worker' ? 'browser' : env) || 'neutral');
 		const trg = env || 'neutral';
 
-		console.log('~> [%s] format: %s platform: %s target: %s', input, format, platform, trg);
+		console.log(`~> ${input}`.padEnd(18) + ` format: %s platform: %s target: %s`, format, platform, trg);
 
 		await esbuild.build({
 			entryPoints: [input],

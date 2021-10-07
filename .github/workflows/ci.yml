@@ -19,28 +19,14 @@ jobs:
         uses: actions/setup-node@main
         with:
           node-version: ${{ matrix.node }}
+          cache: pnpm
           check-latest: true
 
       - name: (env) prepare
         run: curl -L https://pnpm.js.org/pnpm.js | node - add --global pnpm
 
-      - name: (env) cache
-        id: cache
-        uses: actions/cache@main
-        with:
-          path: /tmp/pnpmstore
-          key: ${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-${{ matrix.node }}-
-
-      - name: (env) restore cache
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: lz4 -d /tmp/pnpmstore | tar -xf - ;
-
       - name: Install
         run: pnpm install
-
-      - name: (env) prepare cache
-        run: tar -cf - ~/.pnpm-store | lz4 > /tmp/pnpmstore
 
       - name: Compiles
         run: pnpm run build
