@@ -60,10 +60,10 @@
 		"utils"
 	],
 	"scripts": {
-		"bench": "cross-env TS_NODE_PROJECT=tsconfig.test.json DEBUG=standard ROARR_LOG=true node -r ts-eager/register bench/index.ts",
+		"bench": "cross-env DEBUG=standard ROARR_LOG=true node -r tsm bench/index.ts",
 		"build": "node bin/build && tsc --emitDeclarationOnly",
 		"fmt": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
-		"test": "cross-env TS_NODE_PROJECT=tsconfig.test.json uvu -r ts-eager/register -r test/setup.js -i helpers.ts -i setup.js test",
+		"test": "uvu test \".spec.ts$\" -r tsm -r test/setup.js",
 		"typecheck": "tsc --noEmit"
 	},
 	"prettier": {
@@ -92,9 +92,9 @@
 		"cross-env": "7.0.3",
 		"esbuild": "0.12.28",
 		"prettier": "2.4.0",
-		"ts-eager": "2.0.2",
 		"tsconfig-paths": "3.11.0",
 		"tslib": "2.3.1",
+		"tsm": "^2.1.0",
 		"typescript": "4.4.3",
 		"uvu": "0.5.1"
 	},

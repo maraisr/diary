@@ -1,9 +1,0 @@
-{
-	"extends": "./tsconfig.json",
-	"transpileOnly": true,
-	"compilerOptions": {
-		"module": "commonjs",
-		"sourceMap": true
-	},
-	"include": ["test/**/*", "bench/*", "src/**/*"]
-}
