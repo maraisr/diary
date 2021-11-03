@@ -95,7 +95,7 @@ function logger(
 
 // ~ Reporter
 
-const loglevel_strings: Record<LogLevels, string> = {
+const loglevel_strings: Record<LogLevels, string> = /*#__PURE__*/ {
 	fatal: '✗ fatal',
 	error: '✗ error',
 	warn: '‼ warn ',
@@ -106,7 +106,7 @@ const loglevel_strings: Record<LogLevels, string> = {
 
 const default_reporter: Reporter = (event) => {
 	let label = '';
-	if (__TARGET__ === 'node' || __TARGET__ === 'worker') label = `${loglevel_strings[event.level]} `;
+	if (__TARGET__ === 'node') label = `${loglevel_strings[event.level]} `;
 	if (event.name) label += `[${event.name}] `;
 
 	console[event.level === 'fatal' ? 'error' : event.level](label + event.message, ...event.extra);

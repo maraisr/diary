@@ -62,7 +62,7 @@
 	"scripts": {
 		"bench": "cross-env DEBUG=standard ROARR_LOG=true node -r tsm bench/index.ts",
 		"build": "node bin/build && tsc --emitDeclarationOnly",
-		"fmt": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
+		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
 		"test": "uvu test \".spec.ts$\" -r tsm -r test/setup.js",
 		"typecheck": "tsc --noEmit"
 	},
