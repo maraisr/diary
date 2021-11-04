@@ -81,9 +81,28 @@ DEBUG=scopeA:two,scopeB:* node example.js
 
 #### _workers_
 
-Create an [Environment Variable](https://developers.cloudflare.com/workers/platform/environments) with `DEBUG`.
+As of version v0.3.0 to enable log events you must use the `enable` programmatic api, this is due to Module Workers no
+longer offering global environment variables, and instead they are injected through an api.
 
-> ⚠️ Specifically referencing the Cloudflare Workers
+Ambiant logs do however need to be statically enabled. (put a `enable()` in module scope).
+
+<details><summary>Example</summary>
+
+```ts
+import { diary, enable } from 'diary';
+
+const logger = diary('my-worker');
+
+export default {
+  async fetch(req, env, context) {
+    enable(env.DEBUG);
+
+    logger.info('request for', req.url);
+  },
+};
+```
+
+</details>
 
 #### _programmatic_
 

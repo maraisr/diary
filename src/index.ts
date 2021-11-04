@@ -53,16 +53,16 @@ export const enable = (allows_query: string) => {
 };
 
 // read `localstorage`/`env` for scope "name"s allowed to log
-enable(
-	(__TARGET__ === 'node'
-		? process.env.DEBUG
-		: __TARGET__ === 'browser'
-		? localStorage.getItem('DEBUG')
-		: __TARGET__ === 'worker'
-		? DEBUG
-		: null
-	) || 'a^',
-);
+if (__TARGET__ !== 'worker') {
+	enable(
+		(__TARGET__ === 'node'
+			? process.env.DEBUG
+			: __TARGET__ === 'browser'
+				? localStorage.getItem('DEBUG')
+				: null
+		) || 'a^',
+	);
+}
 
 // ~ Logger
 
