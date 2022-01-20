@@ -206,28 +206,20 @@ Opts certain log messages into being output. See more [here](#programmatic).
 
 ## 💨 Benchmark
 
-> via the [`/bench`](/bench) directory with Node v16.2.0
+> via the [`/bench`](/bench) directory with Node v17.4.0
 
 ```
-Validation
-  ✔ @graphile/logger
-  ✔ bunyan
-  ✔ debug
-  ✔ diary
-  ✔ pino
-  ✔ roarr
-  ✔ ulog
-  ✔ winston
+benchmark :: jit
+  bunyan               x   4,741 ops/sec ±1.72% (85 runs sampled)
+  debug                x 182,974 ops/sec ±2.27% (85 runs sampled)
+  diary                x 582,962 ops/sec ±7.28% (78 runs sampled)
+  pino                 x  17,792 ops/sec ±1.87% (85 runs sampled)
 
-Benchmark
-  @graphile/logger     x 20,198,944 ops/sec ±1.15% (89 runs sampled)
-  bunyan               x    120,302 ops/sec ±0.63% (94 runs sampled)
-  debug                x    211,486 ops/sec ±1.95% (88 runs sampled)
-  diary                x  6,682,958 ops/sec ±1.79% (90 runs sampled)
-  pino                 x     40,994 ops/sec ±2.15% (83 runs sampled)
-  roarr                x    812,015 ops/sec ±1.87% (84 runs sampled)
-  ulog                 x     24,878 ops/sec ±24.93% (19 runs sampled)
-  winston              x      9,499 ops/sec ±14.17% (67 runs sampled)
+benchmark :: aot
+  bunyan               x 255,435 ops/sec ±7.42% (78 runs sampled)
+  debug                x 551,903 ops/sec ±8.55% (80 runs sampled)
+  diary                x 526,972 ops/sec ±16.96% (74 runs sampled)
+  pino                 x 451,559 ops/sec ±3.77% (90 runs sampled)
 ```
 
 ## Related

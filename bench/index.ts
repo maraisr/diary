@@ -4,40 +4,13 @@ import { Suite } from 'benchmark';
 import bunyan from 'bunyan';
 import debug from 'debug';
 import pino from 'pino';
-import roarr, { ROARR } from 'roarr';
-import ulog from 'ulog';
-import { Logger } from '@graphile/logger';
-import { equal } from 'uvu/assert';
-import winston from 'winston';
+import fs from 'fs';
 import { diary } from '../diary/node';
 
-const trap_console = (verb: keyof typeof console) => {
-	const old = console[verb];
-	console[verb] = () => {};
-	return () => (console[verb] = old);
-};
-
-trap_console('info');
-
-async function runner(candidates: Record<string, Function>) {
+async function runner(name: string, candidates: Record<string, Function>) {
 	const sorted_candidates = Object.entries(candidates).sort(([a], [b]) =>
 		a.localeCompare(b),
 	);
-
-	// ~ Check loggers to samey things
-
-	console.log('\nValidation');
-	for (const [name, fn] of sorted_candidates) {
-		const trap = trap_console('log');
-		const result = fn();
-		trap();
-		try {
-			equal(result.length, 1);
-			console.log(`✔`, name);
-		} catch (err) {
-			console.log('✘', name, `(FAILED @ "${err.message}")`);
-		}
-	}
 
 	// ~ Benchmarking
 
@@ -46,12 +19,11 @@ async function runner(candidates: Record<string, Function>) {
 	suite.on('cycle', (e) => console.log('  ' + e.target));
 	suite.add = (name, runner) => previous(name.padEnd(20), runner);
 
-	console.log('\nBenchmark');
-	const trap = trap_console('log');
+	console.log(`\nbenchmark :: ${name}`);
 	for (const [name, fn] of sorted_candidates) {
-		suite.add(name, fn);
+		const instance = fn();
+		suite.add(name, instance);
 	}
-	trap();
 
 	return new Promise((resolve) => {
 		suite.on('complete', resolve);
@@ -59,102 +31,104 @@ async function runner(candidates: Record<string, Function>) {
 	});
 }
 
-// @ts-ignore
-global.ROARR.write = ROARR.write = () => {};
-
-runner({
+runner('jit', {
 	diary() {
-		let events: any[] = [];
-		const suite = diary('standard', (logEvent) => {
-			events.push(logEvent);
-		});
-		suite.info('info message');
-		return events;
-	},
-	ulog() {
-		let events: any[] = [];
-		ulog.use([
-			{
-				outputs: {
-					custom: {
-						log(...args) {
-							events.push(args);
-						},
-					},
-				},
-			},
-		]);
-		const suite = ulog('standard');
-		suite.output = 'custom';
-		suite.info('info message');
-		return events;
-	},
-	roarr() {
-		let events: any[] = [];
-		const suite = roarr.child((message) => {
-			events.push(message);
-			return message;
-		});
-		suite.info('info message');
-		return events;
-	},
-	bunyan() {
-		let events: any[] = [];
-		const suite = bunyan.createLogger({
-			name: 'standard',
-			stream: {
-				write(message) {
-					events.push(message);
-				},
-			},
-		});
-		suite.info('info message');
-		return events;
-	},
-	debug() {
-		const suite = debug('standard');
-		suite.enabled = true;
-		let events: any[] = [];
-		suite.log = (message) => {
-			events.push(message);
-		};
-		suite('info message');
-		return events;
+		const ws = fs.createWriteStream('/dev/null');
+		const sink = event => {
+			ws.write(JSON.stringify(event));
+		}
+
+		return () => {
+			const suite = diary('standard', sink);
+			suite.info('info message');
+		}
 	},
 	pino() {
-		let events: any[] = [];
-		const suite = pino({
-			writable: true,
-			write(message) {
-				events.push(message);
-			},
+		const sink = pino.destination({
+			dest: '/dev/null',
+			minLength: 0,
+			sync: true,
 		});
-		suite.info('info message');
-		return events;
+
+		return () => {
+			const suite = pino(sink);
+			suite.info('info message');
+		}
 	},
-	winston() {
-		let events: any[] = [];
-		const suite = winston.createLogger({
-			transports: [
-				new winston.transports.Console({
-					log(info, next) {
-						events.push(info);
-						return next();
-					},
-				}),
-			],
-		});
-		suite.info('info message');
-		return events;
+	bunyan() {
+		const sink = fs.createWriteStream('/dev/null');
+
+		return () => {
+			const suite = bunyan.createLogger({
+				name: 'standard',
+				stream: sink
+			});
+			suite.info('info message');
+		}
 	},
-	['@graphile/logger']() {
-		let events: any[] = [];
-		const logger = new Logger((scope) => {
-			return (level, message, meta) => {
-				events.push({ scope, level, message, meta });
-			};
+	debug() {
+		const ws = fs.createWriteStream('/dev/null');
+		const sink = event => {
+			ws.write(event);
+		}
+
+		return () => {
+			const suite = debug('standard');
+			suite.enabled = true;
+			suite.log = sink;
+			suite('info message');
+		}
+	},
+});
+
+runner('aot', {
+	diary() {
+		const ws = fs.createWriteStream('/dev/null');
+		const sink = event => {
+			ws.write(JSON.stringify(event));
+		}
+		const suite = diary('standard', sink);
+
+		return () => {
+			suite.info('info message');
+		}
+	},
+	pino() {
+		const sink = pino.destination({
+			dest: '/dev/null',
+			minLength: 0,
+			sync: true,
 		});
-		logger.info('info message');
-		return events;
+
+		const suite = pino(sink);
+
+		return () => {
+			suite.info('info message');
+		}
+	},
+	bunyan() {
+		const sink = fs.createWriteStream('/dev/null');
+		const suite = bunyan.createLogger({
+			name: 'standard',
+			stream: sink
+		});
+
+		return () => {
+			suite.info('info message');
+		}
+	},
+	debug() {
+		const ws = fs.createWriteStream('/dev/null');
+		const sink = event => {
+			ws.write(event);
+		}
+
+		const suite = debug('standard');
+		suite.enabled = true;
+		suite.log = sink;
+
+		return () => {
+			suite('info message');
+		}
 	},
 });
