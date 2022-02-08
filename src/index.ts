@@ -104,10 +104,15 @@ const loglevel_strings: Record<LogLevels, string> = /*#__PURE__*/ {
 	log: '◆ log  ',
 } as const;
 
-const default_reporter: Reporter = (event) => {
+export const default_reporter: Reporter = (event) => {
 	let label = '';
 	if (__TARGET__ === 'node') label = `${loglevel_strings[event.level]} `;
 	if (event.name) label += `[${event.name}] `;
+
+	if (__TARGET__ === 'node' && event.error instanceof Error && typeof event.error.stack !== 'undefined') {
+		const m = event.error.stack.split('\n'); m.shift();
+		event.message += "\n" + m.join('\n');
+	}
 
 	console[event.level === 'fatal' ? 'error' : event.level](label + event.message, ...event.extra);
 };
@@ -151,4 +156,3 @@ export const warn = default_diary.warn;
 export const debug = default_diary.debug;
 export const info = default_diary.info;
 export const log = default_diary.log;
-export const defaultReporter = default_reporter;

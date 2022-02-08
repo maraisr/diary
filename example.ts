@@ -5,6 +5,7 @@ warn('im a generic warn');
 info('im a generic info');
 debug('im a generic debug');
 log('im a generic log');
+error(new Error('test error message'));
 
 const scoped = diary('my-module');
 scoped.error('im error');
