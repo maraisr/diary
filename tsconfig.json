@@ -1,19 +1,14 @@
 {
 	"extends": "@marais/tsconfig",
 	"compilerOptions": {
-		"outDir": "types",
-		"noEmit": false,
-		"declaration": true,
-		"rootDir": "./src",
-		"baseUrl": ".",
-		"target": "ES2019",
-		"removeComments": false,
-		"lib": ["DOM", "ESNext"],
+		"target": "esnext",
+		"module": "esnext",
+		"lib": ["esnext", "dom", "webworker"],
 		"paths": {
-			"diary": ["src/index.ts"],
-			"diary/*": ["src/*"]
+			"diary": ["./src/index.d.ts"],
+			"diary/*": ["./src/*.d.ts"]
 		}
 	},
-	"include": ["src/global.d.ts", "src/*.ts"],
+	"include": ["src", "test"],
 	"exclude": ["node_modules"]
 }

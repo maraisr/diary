@@ -10,6 +10,7 @@ export const trap_console = (
 ) => {
 	if (level === 'fatal') level = 'error';
 	const old = console[level];
+	// @ts-expect-error TS2322
 	console[level] = handler;
 
 	// @ts-ignore

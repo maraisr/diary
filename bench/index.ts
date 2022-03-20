@@ -34,14 +34,14 @@ async function runner(name: string, candidates: Record<string, Function>) {
 runner('jit', {
 	diary() {
 		const ws = fs.createWriteStream('/dev/null');
-		const sink = event => {
+		const sink = (event) => {
 			ws.write(JSON.stringify(event));
-		}
+		};
 
 		return () => {
 			const suite = diary('standard', sink);
 			suite.info('info message');
-		}
+		};
 	},
 	pino() {
 		const sink = pino.destination({
@@ -53,7 +53,7 @@ runner('jit', {
 		return () => {
 			const suite = pino(sink);
 			suite.info('info message');
-		}
+		};
 	},
 	bunyan() {
 		const sink = fs.createWriteStream('/dev/null');
@@ -61,37 +61,37 @@ runner('jit', {
 		return () => {
 			const suite = bunyan.createLogger({
 				name: 'standard',
-				stream: sink
+				stream: sink,
 			});
 			suite.info('info message');
-		}
+		};
 	},
 	debug() {
 		const ws = fs.createWriteStream('/dev/null');
-		const sink = event => {
+		const sink = (event) => {
 			ws.write(event);
-		}
+		};
 
 		return () => {
 			const suite = debug('standard');
 			suite.enabled = true;
 			suite.log = sink;
 			suite('info message');
-		}
+		};
 	},
 });
 
 runner('aot', {
 	diary() {
 		const ws = fs.createWriteStream('/dev/null');
-		const sink = event => {
+		const sink = (event) => {
 			ws.write(JSON.stringify(event));
-		}
+		};
 		const suite = diary('standard', sink);
 
 		return () => {
 			suite.info('info message');
-		}
+		};
 	},
 	pino() {
 		const sink = pino.destination({
@@ -104,24 +104,24 @@ runner('aot', {
 
 		return () => {
 			suite.info('info message');
-		}
+		};
 	},
 	bunyan() {
 		const sink = fs.createWriteStream('/dev/null');
 		const suite = bunyan.createLogger({
 			name: 'standard',
-			stream: sink
+			stream: sink,
 		});
 
 		return () => {
 			suite.info('info message');
-		}
+		};
 	},
 	debug() {
 		const ws = fs.createWriteStream('/dev/null');
-		const sink = event => {
+		const sink = (event) => {
 			ws.write(event);
-		}
+		};
 
 		const suite = debug('standard');
 		suite.enabled = true;
@@ -129,6 +129,6 @@ runner('aot', {
 
 		return () => {
 			suite('info message');
-		}
+		};
 	},
 });
