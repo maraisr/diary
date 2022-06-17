@@ -28,7 +28,7 @@ function logger(
 	message: Error | string,
 	...extra: unknown[]
 ): void {
-	let len = allows.length;
+	let len = allows?.length;
 
 	// is this "scope" allowed to log?
 	while (len-- > 0) {
