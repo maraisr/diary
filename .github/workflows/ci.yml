@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [14, 16, 17]
+        node: [16, 17, 18]
     steps:
       - uses: actions/checkout@main
 
       - name: (env) setup pnpm
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 7.0.0-beta.2
+          version: 7.2.1
 
       - name: (env) setup node v${{ matrix.node }}
         uses: actions/setup-node@main
