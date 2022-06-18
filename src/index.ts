@@ -28,6 +28,8 @@ function logger(
 	message: Error | string,
 	...extra: unknown[]
 ): void {
+	if (!allows) return;
+
 	let len = allows.length;
 
 	// is this "scope" allowed to log?
