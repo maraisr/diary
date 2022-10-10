@@ -1,28 +1,25 @@
 export type Reporter = (event: LogEvent) => void;
 
-type LogFn = (message: string, ...args: unknown[]) => void;
-type LogFnAsError = (message: string | Error, ...args: unknown[]) => void;
+interface LogFn {
+    <T extends object>(message: T, ...args: unknown[]): void;
+    <T extends Error>(message: T, ...args: unknown[]): void;
+    (message: unknown, ...args: unknown[]): void;
+    (message: string, ...args: unknown[]): void;
+}
 
 export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
 type ErrorLevels = Extract<LogLevels, 'fatal' | 'error'>;
 
 export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFn> & Record<ErrorLevels, LogFnAsError>;
 
-type LogEventBase = {
+export interface LogEvent {
     name: string;
     level: LogLevels;
 
-    message: string;
-    extra: unknown[];
-    error: never;
+    messages: unknown[];
 
     [other: string]: any;
 }
-
-export type LogEvent =
-    | { level: 'error', error: Error } & Omit<LogEventBase, 'error'>
-    | { level: 'fatal', error: Error } & Omit<LogEventBase, 'error'>
-    | LogEventBase;
 
 /**
  * Creates a new diary logging instance.
@@ -67,8 +64,8 @@ export const enable: (allows_query: string) => void;
 
 export const default_reporter: Reporter;
 
-export const fatal: LogFnAsError;
-export const error: LogFnAsError;
+export const fatal: LogFn;
+export const error: LogFn;
 export const warn: LogFn;
 export const debug: LogFn;
 export const info: LogFn;

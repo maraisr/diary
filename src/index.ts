@@ -1,4 +1,4 @@
-import type { Diary, Reporter, LogLevels, LogEvent } from 'diary';
+import type { Diary, Reporter, LogLevels } from 'diary';
 
 const to_reg_exp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 let allows: RegExp[];
@@ -7,7 +7,6 @@ export const enable = (allows_query: string) => {
 	allows = allows_query.split(/[\s,]+/).map(to_reg_exp);
 };
 
-// read `localstorage`/`env` for scope "name"s allowed to log
 if (__TARGET__ === 'node') enable(process.env.DEBUG || 'a^');
 
 // ~ Logger
@@ -16,29 +15,15 @@ function logger(
 	name: string,
 	reporter: Reporter,
 	level: LogLevels,
-	message: Error | string,
-	...extra: unknown[]
+	...messages: unknown[]
 ): void {
 	if (!allows) return;
 
 	let len = allows.length;
 
 	// is this "scope" allowed to log?
-	while (len-- > 0) {
-		if (allows[len].test(name)) {
-			const log_event = {
-				name, level, extra,
-				message: message as string,
-			} as LogEvent;
-
-			if ((level === 'error' || level === 'fatal') && message instanceof Error) {
-				log_event.error = message;
-				log_event.message = message.message;
-			}
-
-			return reporter(log_event);
-		}
-	}
+	while (len-- > 0 && allows[len].test(name))
+		return reporter({ name, level, messages });
 }
 
 // ~ Reporter
@@ -54,15 +39,31 @@ const loglevel_strings: Record<LogLevels, string> = /*#__PURE__*/ {
 
 export const default_reporter: Reporter = (event) => {
 	let label = '';
+	const fn = console[event.level === 'fatal' ? 'error' : event.level];
+
 	if (__TARGET__ === 'node') label = `${loglevel_strings[event.level]} `;
 	if (event.name) label += `[${event.name}] `;
 
-	if (__TARGET__ === 'node' && event.error instanceof Error && typeof event.error.stack !== 'undefined') {
-		const m = event.error.stack.split('\n'); m.shift();
-		event.message += "\n" + m.join('\n');
+	if (__TARGET__ === 'node') {
+		let message = '';
+		const maybe_error = event.messages[0];
+
+		if (maybe_error instanceof Error && typeof maybe_error.stack !== 'undefined') {
+			const m = maybe_error.stack.split('\n'); m.shift();
+			message = `${maybe_error.message}\n${m.join('\n')}`;
+		} else {
+			message = _FORMAT(...event.messages);
+		}
+
+		return void fn(label + message);
 	}
 
-	console[event.level === 'fatal' ? 'error' : event.level](label + event.message, ...event.extra);
+	if (typeof event.messages[0] === 'object') {
+		return void fn(label, ...event.messages);
+	} else {
+		const message = event.messages.shift();
+		return void fn(label + message, ...event.messages);
+	}
 };
 
 // ~ Public api

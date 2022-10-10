@@ -20,7 +20,6 @@
 - No [dependencies](https://npm.anvaka.com/#/view/2d/diary)
 - Outstanding [performance](#-benchmark)
 - Support for [`debug`'s filter](https://www.npmjs.com/package/debug#wildcards)
-- Browser compatible through `localStorage`
 
 ## ⚙️ Install
 
@@ -31,103 +30,37 @@ npm add diary
 ## 🚀 Usage
 
 ```ts
-import { info, diary } from 'diary';
+import { info, diary, enable } from 'diary';
 
+// 1️⃣ Choose to enable the emission of logs, or not.
+enable('*');
+
+// 2️⃣ log something
 info('this important thing happened');
 // ~> ℹ info  this important thing happened
 
+// Maybe setup a scoped logger
 const scopedDiary = diary('my-module', (event) => {
   if (event.level === 'error') {
     Sentry.captureException(event.error);
   }
 });
 
+// 3️⃣ log more things
 scopedDiary.info('this other important thing happened');
 // ~> ℹ info  [my-module] this other important thing happened
 ```
 
-Controlling runtime emission of logs, using the code below as an example:
+<details><summary>Node users</summary>
 
-```ts
-// example.js
-import { diary } from 'diary';
+The `enable` function is executed for you from the `DEBUG` environment variable. And as a drop in replacement for
+`debug`.
 
-const scopeA1 = diary('scopeA:one');
-const scopeA2 = diary('scopeA:two');
-const scopeB1 = diary('scopeB:one');
-const scopeB2 = diary('scopeB:two');
-
-scopeA1.info('message'); // won't log ✗
-scopeA2.info('message'); // will log ✔
-scopeB1.info('message'); // will log ✔
-scopeB2.info('message'); // will log ✔
-```
-
-#### _browser_
-
-```ts
-localStorage.setItem('DEBUG', 'scopeA:two,scopeB:*');
-
-// then your scripts
-```
-
-> 💡 Tip - Set this via the DevTools, then hit refresh. Saves you having to re-bundle.
-
-#### _node_
-
-```sh
-DEBUG=scopeA:two,scopeB:* node example.js
-```
-
-#### _workers_
-
-As of version v0.3.0 to enable log events you must use the `enable` programmatic api, this is due to Module Workers no
-longer offering global environment variables, and instead they are injected through an api.
-
-Ambiant logs do however need to be statically enabled. (put a `enable()` in module scope).
-
-<details><summary>Example</summary>
-
-```ts
-import { diary, enable } from 'diary';
-
-const logger = diary('my-worker');
-
-export default {
-  async fetch(req, env, context) {
-    enable(env.DEBUG);
-
-    logger.info('request for', req.url);
-  },
-};
+```shell
+DEBUG=client:db,server:* node example.js
 ```
 
 </details>
-
-#### _programmatic_
-
-```ts
-import { diary, enable } from 'diary';
-
-enable('scopeA:two,scopeB:*');
-
-const scopeA1 = diary('scopeA:one');
-const scopeA2 = diary('scopeA:two');
-const scopeB1 = diary('scopeB:one');
-const scopeB2 = diary('scopeB:two');
-
-scopeA1.info('message'); // won't log ✗
-scopeA2.info('message'); // will log ✔
-scopeB1.info('message'); // will log ✔
-scopeB2.info('message'); // will log ✔
-
-enable('scopeA:*');
-
-scopeA1.info('message'); // will log ✔
-scopeA2.info('message'); // will log ✔
-scopeB1.info('message'); // won't log ✗
-scopeB2.info('message'); // won't log ✗
-```
 
 ## 🔎 API
 
@@ -166,10 +99,23 @@ interface LogEvent {
   name: string;
   level: LogLevels;
 
-  message: string;
-  extra: unknown[];
+  messages: any[];
 }
 ```
+
+> _Note_: you can attach any other context in middleware.
+>
+> <details><summary>Example</summary>
+>
+> ```ts
+> import { diary, default_reporter } from 'diary';
+> const scope = diary('scope', (event) => {
+>   event.ts = new Date();
+>   return default_reporter(event);
+> });
+> ```
+>
+> </details>
 
 Errors (for `error` and `fatal`) there is also an `error: Error` property.
 
@@ -178,19 +124,22 @@ Errors (for `error` and `fatal`) there is also an `error: Error` property.
 A set of functions that map to `console.error`, `console.warn`, `console.debug`, `console.info` and `console.info`.
 Aptly named;
 
-- `fatal(message: string | Error, ...extra: any[])`
-- `error(message: string | Error, ...extra: any[])`
+`fatal`, `error`, `warn`, `debug`, `info`, and `log`. All of which follow the same api signature:
 
-  If an `Error` instance is sent, the error object will be accessible with the `error` property on the context, this is
-  for both `fatal` and `error`.
+```ts
+declare logFunction(message: object | Error | string, ...args: unknown[]): void;
+```
 
-- `warn(message: string, ...extra: any[])`
-- `debug(message: string, ...extra: any[])`
-- `info(message: string, ...extra: any[])`
-- `log(message: string, ...extra: any[])`
+All parameters are simply spread onto the function and reported. Node/browser's built-in formatters will format any
+objects (by default).
 
-All `extra` parameters are simply spread onto the console function, so node/browser's built-in formatters will format
-any objects etc.
+```ts
+info('hi there'); // ℹ info  hi there
+info('hi %s', 'there'); // ℹ info  hi there
+info('hi %j', { foo: 'bar' }); // ℹ info hi { "foo": "bar" }
+info('hi %o', { foo: 'bar' }); // ℹ info hi { foo: 'bar' }
+info({ foo: 'bar' }); // ℹ info { foo: 'bar' }
+```
 
 #### diary <small>(optional)</small>
 
@@ -206,20 +155,20 @@ Opts certain log messages into being output. See more [here](#programmatic).
 
 ## 💨 Benchmark
 
-> via the [`/bench`](/bench) directory with Node v17.4.0
+> via the [`/bench`](/bench) directory with Node v18.10.0
 
 ```
 benchmark :: jit
-  bunyan               x   4,741 ops/sec ±1.72% (85 runs sampled)
-  debug                x 182,974 ops/sec ±2.27% (85 runs sampled)
-  diary                x 582,962 ops/sec ±7.28% (78 runs sampled)
-  pino                 x  17,792 ops/sec ±1.87% (85 runs sampled)
+  bunyan               x    10,398 ops/sec ±0.59% (94 runs sampled)
+  debug                x   458,688 ops/sec ±4.73% (85 runs sampled)
+  diary                x 1,054,755 ops/sec ±12.08% (79 runs sampled)
+  pino                 x    40,553 ops/sec ±0.68% (97 runs sampled)
 
 benchmark :: aot
-  bunyan               x 255,435 ops/sec ±7.42% (78 runs sampled)
-  debug                x 551,903 ops/sec ±8.55% (80 runs sampled)
-  diary                x 526,972 ops/sec ±16.96% (74 runs sampled)
-  pino                 x 451,559 ops/sec ±3.77% (90 runs sampled)
+  bunyan               x 448,535 ops/sec ±14.30% (72 runs sampled)
+  debug                x 878,692 ops/sec ±18.58% (76 runs sampled)
+  diary                x 795,359 ops/sec ±31.93% (59 runs sampled)
+  pino                 x 263,425 ops/sec ±0.83% (98 runs sampled)
 ```
 
 ## Related
