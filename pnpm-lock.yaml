@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@marais/prettier': 0.0.1
   '@marais/tsconfig': 0.0.3
   '@types/node': 18.8.3
   bundt: 2.0.0-next.5
@@ -11,6 +12,7 @@ specifiers:
   uvu: 0.5.4
 
 devDependencies:
+  '@marais/prettier': 0.0.1
   '@marais/tsconfig': 0.0.3
   '@types/node': 18.8.3
   bundt: 2.0.0-next.5
@@ -30,6 +32,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@marais/prettier/0.0.1:
+    resolution: {integrity: sha512-2dSx4GqwgEylxvSamA5jH1XTXx9QrM89CToB1xiciJbtYv6PMWvX0lZ2viWDk2viWh91/Qd4cpBAvdi+LDKC0A==}
+    dev: true
 
   /@marais/tsconfig/0.0.3:
     resolution: {integrity: sha512-KRJiOww98fD1ODCGxTiA8EIiXDtm7VaIEVfkeQ8yHA4SUcuBib85qgM1bQ6wD8H72YR8MMmXAxTfBusLBPnqjw==}

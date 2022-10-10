@@ -60,7 +60,9 @@
 		"test": "uvu -r tsm -r test/setup.js test \".spec.ts$\"",
 		"typecheck": "tsc --noEmit"
 	},
+	"prettier": "@marais/prettier",
 	"devDependencies": {
+		"@marais/prettier": "0.0.1",
 		"@marais/tsconfig": "0.0.3",
 		"@types/node": "18.8.3",
 		"bundt": "2.0.0-next.5",
