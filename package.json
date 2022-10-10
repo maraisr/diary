@@ -19,21 +19,26 @@
 	"exports": {
 		".": {
 			"worker": {
+				"types": "./diary/worker/index.d.ts",
 				"import": "./diary/worker/index.mjs",
 				"require": "./diary/worker/index.js"
 			},
 			"browser": {
+				"types": "./diary/browser/index.d.ts",
 				"import": "./diary/browser/index.mjs",
 				"require": "./diary/browser/index.js"
 			},
+			"types": "./diary/node/index.d.ts",
 			"import": "./diary/node/index.mjs",
 			"require": "./diary/node/index.js"
 		},
 		"./json": {
+			"types": "./json/index.d.ts",
 			"import": "./json/index.mjs",
 			"require": "./json/index.js"
 		},
 		"./utils": {
+			"types": "./utils/index.d.ts",
 			"import": "./utils/index.mjs",
 			"require": "./utils/index.js"
 		},
