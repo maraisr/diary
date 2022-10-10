@@ -52,17 +52,17 @@
 		"bench": "cross-env DEBUG=standard ROARR_LOG=true node -r tsm bench/index.ts",
 		"build": "bundt",
 		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/*}.+(ts|json|yml|md)\"",
-		"test": "uvu test \".spec.ts$\" -r tsm -r test/setup.js",
+		"test": "uvu -r tsm -r test/setup.js test \".spec.ts$\"",
 		"typecheck": "tsc --noEmit"
 	},
 	"devDependencies": {
 		"@marais/tsconfig": "0.0.3",
-		"@types/node": "18.0.0",
+		"@types/node": "18.8.3",
 		"bundt": "2.0.0-next.5",
 		"cross-env": "7.0.3",
 		"prettier": "2.7.1",
-		"tsm": "2.2.1",
-		"typescript": "4.7.4",
-		"uvu": "0.5.3"
+		"tsm": "2.2.2",
+		"typescript": "4.8.4",
+		"uvu": "0.5.4"
 	}
 }
