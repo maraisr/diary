@@ -1,4 +1,4 @@
-import type { Diary, Reporter, LogLevels } from 'diary';
+import type { Diary, LogLevels, Reporter } from 'diary';
 
 const to_reg_exp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
 let allows: RegExp[];
@@ -22,8 +22,8 @@ function logger(
 	let len = allows.length;
 
 	// is this "scope" allowed to log?
-	while (len-- > 0 && allows[len].test(name))
-		return reporter({ name, level, messages });
+	while (len-- > 0)
+		if (allows[len].test(name)) return reporter({ name, level, messages });
 }
 
 // ~ Reporter
@@ -45,11 +45,12 @@ export const default_reporter: Reporter = (event) => {
 	if (event.name) label += `[${event.name}] `;
 
 	if (__TARGET__ === 'node') {
-		let message = '';
+		let message: string;
 		const maybe_error = event.messages[0];
 
 		if (maybe_error instanceof Error && typeof maybe_error.stack !== 'undefined') {
-			const m = maybe_error.stack.split('\n'); m.shift();
+			const m = maybe_error.stack.split('\n');
+			m.shift();
 			message = `${maybe_error.message}\n${m.join('\n')}`;
 		} else {
 			message = _FORMAT(...event.messages);

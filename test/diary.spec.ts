@@ -95,8 +95,43 @@ describe('allows', (it) => {
 		scopeB.info('info b');
 
 		assert.equal(events, ['info a', 'info b']);
+	});
 
-		enable('*');
+	it('should allow multiple allows per enable', () => {
+		let events: any[] = [];
+		const scopeA = diary.diary(
+			'scope:a',
+			(ev) => (events = events.concat(ev.messages)),
+		);
+		const scopeB = diary.diary(
+			'scope:b',
+			(ev) => (events = events.concat(ev.messages)),
+		);
+
+		enable('scope:a,blah');
+
+		scopeA.info('info a');
+		scopeB.info('info b');
+
+		assert.equal(events, ['info a']);
+
+		events = [];
+		enable('blah,scope:a');
+
+		scopeA.info('info a');
+		scopeB.info('info b');
+		scopeB.info('info b');
+		scopeA.info('info a');
+
+		assert.equal(events, ['info a', 'info a']);
+
+		events = [];
+		enable('foo,bar:*,scope:,scope:*');
+
+		scopeA.info('info a');
+		scopeB.info('info b');
+
+		assert.equal(events, ['info a', 'info b']);
 	});
 });
 
