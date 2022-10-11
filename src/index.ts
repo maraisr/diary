@@ -1,7 +1,8 @@
-import type { Diary, LogLevels, Reporter } from 'diary';
+import type { Diary, LogEvent, LogLevels, Reporter } from 'diary';
+
+let allows: RegExp[] = [];
 
 const to_reg_exp = (x: string) => new RegExp(x.replace(/\*/g, '.*') + '$');
-let allows: RegExp[];
 
 export const enable = (allows_query: string) => {
 	allows = allows_query.split(/[\s,]+/).map(to_reg_exp);
@@ -11,20 +12,15 @@ if (__TARGET__ === 'node') enable(process.env.DEBUG || 'a^');
 
 // ~ Logger
 
-function logger(
+const logger = (
 	name: string,
 	reporter: Reporter,
 	level: LogLevels,
 	...messages: unknown[]
-): void {
-	if (!allows) return;
-
-	let len = allows.length;
-
-	// is this "scope" allowed to log?
-	while (len-- > 0)
+): void => {
+	for (let len = allows.length; len--;)
 		if (allows[len].test(name)) return reporter({ name, level, messages });
-}
+};
 
 // ~ Reporter
 
@@ -37,7 +33,7 @@ const loglevel_strings: Record<LogLevels, string> = /*#__PURE__*/ {
 	log: '◆ log  ',
 } as const;
 
-export const default_reporter: Reporter = (event) => {
+export const default_reporter = (event: LogEvent) => {
 	let label = '';
 	const fn = console[event.level === 'fatal' ? 'error' : event.level];
 
@@ -69,7 +65,7 @@ export const default_reporter: Reporter = (event) => {
 
 // ~ Public api
 
-export function diary(name: string, onEmit?: Reporter): Diary {
+export const diary = (name: string, onEmit?: Reporter): Diary => {
 	onEmit = onEmit || default_reporter;
 
 	return {
@@ -80,7 +76,7 @@ export function diary(name: string, onEmit?: Reporter): Diary {
 		info: logger.bind(0, name, onEmit, 'info'),
 		log: logger.bind(0, name, onEmit, 'log'),
 	};
-}
+};
 
 const default_diary = diary('');
 
