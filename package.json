@@ -17,11 +17,6 @@
 	"type": "module",
 	"exports": {
 		".": {
-			"worker": {
-				"types": "./diary/worker/index.d.ts",
-				"import": "./diary/worker/index.mjs",
-				"require": "./diary/worker/index.js"
-			},
 			"browser": {
 				"types": "./diary/browser/index.d.ts",
 				"import": "./diary/browser/index.mjs",
