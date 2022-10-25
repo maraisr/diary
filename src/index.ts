@@ -1,4 +1,4 @@
-import type { Diary, LogEvent, LogLevels, Reporter } from 'diary';
+import type { Diary, LogLevels, Reporter } from 'diary';
 
 let allows: RegExp[] = [];
 
@@ -33,7 +33,7 @@ const loglevel_strings: Record<LogLevels, string> = /*#__PURE__*/ {
 	log: '◆ log  ',
 } as const;
 
-export const default_reporter = (event: LogEvent) => {
+export const default_reporter: Reporter = (event) => {
 	let label = '';
 	const fn = console[event.level === 'fatal' ? 'error' : event.level];
 
