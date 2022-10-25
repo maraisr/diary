@@ -8,9 +8,8 @@ interface LogFn {
 }
 
 export type LogLevels = 'fatal' | 'error' | 'warn' | 'debug' | 'info' | 'log';
-type ErrorLevels = Extract<LogLevels, 'fatal' | 'error'>;
 
-export type Diary = Record<Exclude<LogLevels, ErrorLevels>, LogFn> & Record<ErrorLevels, LogFnAsError>;
+export type Diary = Record<LogLevels, LogFn>
 
 export interface LogEvent {
     name: string;
