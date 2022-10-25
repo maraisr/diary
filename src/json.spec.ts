@@ -1,7 +1,8 @@
 import * as assert from 'uvu/assert';
 import * as diary from '.';
 import * as json from './json';
-import { describe, trap_console } from '../test/helpers';
+import { describe } from '../test/helpers';
+import { restoreAll, spyOn } from 'nanospy';
 
 describe('api', (it) => {
 	it('should export', () => {
@@ -10,26 +11,25 @@ describe('api', (it) => {
 });
 
 describe('output', (it) => {
+	it.after.each(() => {
+		restoreAll();
+	});
+
 	it('simple', () => {
-		let result;
-		const trap = trap_console('log', (...args: any) => {
-			result = args.join('');
-		});
+		const log_output = spyOn(console, 'log', () => {});
+
 		const scope = diary.diary('json', json.reporter);
 		scope.info('foo %s', 'bar');
 
+		assert.equal(log_output.callCount, 1);
 		assert.equal(
-			result,
+			log_output.calls[0][0],
 			'{"name":"json","level":"info","message":"foo bar"}',
 		);
-		trap();
 	});
 
 	it('with rest', () => {
-		let result;
-		const trap = trap_console('log', (...args: any) => {
-			result = args.join('');
-		});
+		const log_output = spyOn(console, 'log', () => {});
 
 		const scope = diary.diary('json', (event) => {
 			event.context = { sequence: 0 };
@@ -38,10 +38,10 @@ describe('output', (it) => {
 
 		scope.info('foo %s', 'bar');
 
+		assert.equal(log_output.callCount, 1);
 		assert.equal(
-			result,
+			log_output.calls[0][0],
 			'{"name":"json","level":"info","message":"foo bar","context":{"sequence":0}}',
 		);
-		trap();
 	});
 });

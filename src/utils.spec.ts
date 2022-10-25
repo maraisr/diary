@@ -1,5 +1,5 @@
 import * as assert from 'uvu/assert';
-import { sprintf, compare } from './utils';
+import { compare, sprintf } from './utils';
 import { describe } from '../test/helpers';
 
 describe('sprintf', (it) => {
