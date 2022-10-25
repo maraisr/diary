@@ -1,7 +1,7 @@
 import * as assert from 'uvu/assert';
-import * as diary from '../src';
-import * as json from '../src/json';
-import { describe, trap_console } from './helpers';
+import * as diary from '.';
+import * as json from './json';
+import { describe, trap_console } from '../test/helpers';
 
 describe('api', (it) => {
 	it('should export', () => {

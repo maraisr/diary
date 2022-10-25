@@ -1,6 +1,6 @@
 import * as assert from 'uvu/assert';
-import { sprintf, compare } from '../src/utils';
-import { describe } from './helpers';
+import { sprintf, compare } from './utils';
+import { describe } from '../test/helpers';
 
 describe('sprintf', (it) => {
 	it('should format something basic', () => {
