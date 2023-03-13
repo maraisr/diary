@@ -20,25 +20,25 @@
 			"browser": {
 				"types": "./diary/browser/index.d.ts",
 				"import": "./diary/browser/index.mjs",
-				"require": "./diary/browser/index.js"
+				"require": "./diary/browser/index.cjs"
 			},
 			"types": "./diary/node/index.d.ts",
 			"import": "./diary/node/index.mjs",
-			"require": "./diary/node/index.js"
+			"require": "./diary/node/index.cjs"
 		},
 		"./json": {
 			"types": "./json/index.d.ts",
 			"import": "./json/index.mjs",
-			"require": "./json/index.js"
+			"require": "./json/index.cjs"
 		},
 		"./utils": {
 			"types": "./utils/index.d.ts",
 			"import": "./utils/index.mjs",
-			"require": "./utils/index.js"
+			"require": "./utils/index.cjs"
 		},
 		"./package.json": "./package.json"
 	},
-	"main": "diary/node/index.js",
+	"main": "diary/node/index.cjs",
 	"module": "diary/node/index.mjs",
 	"types": "diary/node/index.d.ts",
 	"files": [
