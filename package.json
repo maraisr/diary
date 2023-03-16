@@ -1,6 +1,6 @@
 {
 	"name": "diary",
-	"version": "0.4.3",
+	"version": "0.4.4",
 	"description": "Fast effective logging library for both Node, the Browser, and Workers!",
 	"keywords": [
 		"fast",
@@ -14,7 +14,6 @@
 	"license": "MIT",
 	"author": "Marais Rossow <me@marais.dev> (https://marais.io)",
 	"sideEffects": false,
-	"type": "module",
 	"exports": {
 		".": {
 			"browser": {
