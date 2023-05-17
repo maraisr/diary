@@ -1,37 +1,14 @@
 // @ts-nocheck
 
-import { Suite } from 'benchmark';
+import { suite } from '@marais/bench';
 import bunyan from 'bunyan';
 import debug from 'debug';
 import pino from 'pino';
 import fs from 'fs';
-import { diary } from '../diary/node';
+import { diary } from '../diary/node/index.js';
 
-async function runner(name: string, candidates: Record<string, Function>) {
-	const sorted_candidates = Object.entries(candidates).sort(([a], [b]) =>
-		a.localeCompare(b),
-	);
-
-	// ~ Benchmarking
-
-	const suite = new Suite();
-	const previous = suite.add.bind(suite);
-	suite.on('cycle', (e) => console.log('  ' + e.target));
-	suite.add = (name, runner) => previous(name.padEnd(20), runner);
-
-	console.log(`\nbenchmark :: ${name}`);
-	for (const [name, fn] of sorted_candidates) {
-		const instance = fn();
-		suite.add(name, instance);
-	}
-
-	return new Promise((resolve) => {
-		suite.on('complete', resolve);
-		suite.run();
-	});
-}
-
-runner('jit', {
+console.log('JIT');
+await suite({
 	diary() {
 		const ws = fs.createWriteStream('/dev/null');
 		const sink = (event) => {
@@ -81,7 +58,8 @@ runner('jit', {
 	},
 });
 
-runner('aot', {
+console.log('\nAOT');
+await suite({
 	diary() {
 		const ws = fs.createWriteStream('/dev/null');
 		const sink = (event) => {

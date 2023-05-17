@@ -1,9 +1,9 @@
 {
 	"private": true,
+	"type": "modue",
 	"dependencies": {
 		"@graphile/logger": "0.2.0",
-		"@types/benchmark": "2.1.1",
-		"benchmark": "2.1.4",
+		"@marais/bench": "0.0.6",
 		"bunyan": "1.8.15",
 		"debug": "4.3.4",
 		"pino": "7.9.1"

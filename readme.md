@@ -158,18 +158,22 @@ Opts certain log messages into being output. See more [here](#programmatic).
 > via the [`/bench`](/bench) directory with Node v18.10.0
 
 ```
-benchmark :: jit
-  bunyan               x    10,398 ops/sec ±0.59% (94 runs sampled)
-  debug                x   458,688 ops/sec ±4.73% (85 runs sampled)
-  diary                x 1,054,755 ops/sec ±12.08% (79 runs sampled)
-  pino                 x    40,553 ops/sec ±0.68% (97 runs sampled)
+JIT
+✔ diary  ~ 1,418,275 ops/sec ± 0.21%
+✔ pino   ~    46,952 ops/sec ± 0.02%
+✔ bunyan ~     9,755 ops/sec ± 0.01%
+✔ debug  ~   438,651 ops/sec ± 0.22%
 
-benchmark :: aot
-  bunyan               x 448,535 ops/sec ±14.30% (72 runs sampled)
-  debug                x 878,692 ops/sec ±18.58% (76 runs sampled)
-  diary                x 795,359 ops/sec ±31.93% (59 runs sampled)
-  pino                 x 263,425 ops/sec ±0.83% (98 runs sampled)
+AOT
+✔ diary  ~ 1,575,156 ops/sec ± 0.28%
+✔ pino   ~   280,462 ops/sec ± 0.03%
+✔ bunyan ~   602,219 ops/sec ± 0.15%
+✔ debug  ~ 1,303,441 ops/sec ± 0.23%
 ```
+
+> AOT: The logger is setup a head of time, and ops/sec is the result of calling the log fn. Simulates long running
+> process, with a single logger. JIT: The logger is setup right before the log fn is called per op. Simulates setting up
+> a logger per request for example.
 
 ## Related
 
