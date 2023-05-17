@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16, 17, 18, 20]
+        node: [16, 18, 20]
     steps:
       - uses: actions/checkout@main
 
       - name: (env) setup pnpm
-        uses: pnpm/action-setup@v2.0.1
+        uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.2.1
+          version: 8.5.1
 
       - name: (env) setup node v${{ matrix.node }}
         uses: actions/setup-node@main
@@ -34,7 +34,7 @@ jobs:
         run: pnpm run build
 
       - name: Test
-        run: pnpm test
+        run: pnpm run test
 
       - name: Check Types
         run: pnpm run typecheck
