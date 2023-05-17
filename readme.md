@@ -155,20 +155,20 @@ Opts certain log messages into being output. See more [here](#programmatic).
 
 ## 💨 Benchmark
 
-> via the [`/bench`](/bench) directory with Node v18.10.0
+> via the [`/bench`](/bench) directory with Node v20.2.0
 
 ```
 JIT
-✔ diary  ~ 1,421,961 ops/sec ± 0.17%
-✔ pino   ~    47,056 ops/sec ± 0.02%
-✔ bunyan ~     9,616 ops/sec ± 0.01%
-✔ debug  ~   434,528 ops/sec ± 0.22%
+✔ diary  ~ 1,434,414 ops/sec ± 0.16%
+✔ pino   ~    47,264 ops/sec ± 0.02%
+✔ bunyan ~     9,644 ops/sec ± 0.01%
+✔ debug  ~   444,612 ops/sec ± 0.22%
 
 AOT
-✔ diary  ~ 1,579,136 ops/sec ± 0.28%
-✔ pino   ~   283,626 ops/sec ± 0.03%
-✔ bunyan ~   591,021 ops/sec ± 0.16%
-✔ debug  ~ 1,302,317 ops/sec ± 0.24%
+✔ diary  ~ 1,542,796 ops/sec ± 0.29%
+✔ pino   ~   281,232 ops/sec ± 0.03%
+✔ bunyan ~   588,768 ops/sec ± 0.16%
+✔ debug  ~ 1,287,846 ops/sec ± 0.24%
 ```
 
 > AOT: The logger is setup a head of time, and ops/sec is the result of calling the log fn. Simulates long running
