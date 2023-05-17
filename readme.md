@@ -159,16 +159,16 @@ Opts certain log messages into being output. See more [here](#programmatic).
 
 ```
 JIT
-✔ diary  ~ 1,418,275 ops/sec ± 0.21%
-✔ pino   ~    46,952 ops/sec ± 0.02%
-✔ bunyan ~     9,755 ops/sec ± 0.01%
-✔ debug  ~   438,651 ops/sec ± 0.22%
+✔ diary  ~ 1,421,961 ops/sec ± 0.17%
+✔ pino   ~    47,056 ops/sec ± 0.02%
+✔ bunyan ~     9,616 ops/sec ± 0.01%
+✔ debug  ~   434,528 ops/sec ± 0.22%
 
 AOT
-✔ diary  ~ 1,575,156 ops/sec ± 0.28%
-✔ pino   ~   280,462 ops/sec ± 0.03%
-✔ bunyan ~   602,219 ops/sec ± 0.15%
-✔ debug  ~ 1,303,441 ops/sec ± 0.23%
+✔ diary  ~ 1,579,136 ops/sec ± 0.28%
+✔ pino   ~   283,626 ops/sec ± 0.03%
+✔ bunyan ~   591,021 ops/sec ± 0.16%
+✔ debug  ~ 1,302,317 ops/sec ± 0.24%
 ```
 
 > AOT: The logger is setup a head of time, and ops/sec is the result of calling the log fn. Simulates long running
