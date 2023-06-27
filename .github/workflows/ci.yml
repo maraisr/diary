@@ -16,9 +16,9 @@ jobs:
       - uses: actions/checkout@main
 
       - name: (env) setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@master
         with:
-          version: 8.5.1
+          version: 8.6.5
 
       - name: (env) setup node v${{ matrix.node }}
         uses: actions/setup-node@main
@@ -27,14 +27,7 @@ jobs:
           cache: pnpm
           check-latest: true
 
-      - name: Install
-        run: pnpm install
-
-      - name: Compiles
-        run: pnpm run build
-
-      - name: Test
-        run: pnpm run test
-
-      - name: Check Types
-        run: pnpm run typecheck
+      - run: pnpm install --ignore-scripts
+      - run: pnpm run build
+      - run: pnpm run test
+      - run: pnpm run typecheck
