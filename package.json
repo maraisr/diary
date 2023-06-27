@@ -50,7 +50,7 @@
 		"bench": "cross-env DEBUG=standard ROARR_LOG=true tsm bench/index.ts",
 		"build": "bundt --minify",
 		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/**/*,src/*.spec}.+(ts|json|yml|md)\"",
-		"test": "uvu -r tsm -r test/helpers/setup.js src \".spec.ts$\"",
+		"test": "uvu src \".test.ts$\" -r tsm -r test/helpers/setup.js",
 		"typecheck": "tsc --noEmit"
 	},
 	"prettier": "@marais/prettier",
