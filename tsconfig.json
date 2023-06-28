@@ -1,12 +1,10 @@
 {
 	"extends": "@marais/tsconfig",
 	"compilerOptions": {
-		"target": "esnext",
-		"module": "esnext",
-		"lib": ["esnext", "dom", "webworker"],
+		"baseUrl": ".",
 		"paths": {
-			"diary": ["./src/index.d.ts"],
-			"diary/*": ["./src/*.d.ts"]
+			"diary": ["src/index.d.ts"],
+			"diary/*": ["src/*.d.ts"]
 		}
 	},
 	"include": ["src", "test"],
