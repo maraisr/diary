@@ -1,72 +1,72 @@
 {
-	"name": "diary",
-	"version": "0.4.4",
-	"description": "Fast effective logging library for both Node, the Browser, and Workers!",
-	"keywords": [
-		"fast",
-		"logging",
-		"utility",
-		"middleware",
-		"debug",
-		"logger"
-	],
-	"repository": "maraisr/diary",
-	"license": "MIT",
-	"author": "Marais Rossow <me@marais.dev> (https://marais.io)",
-	"sideEffects": false,
-	"exports": {
-		".": {
-			"browser": {
-				"types": "./diary/browser/index.d.ts",
-				"import": "./diary/browser/index.mjs",
-				"require": "./diary/browser/index.js"
-			},
-			"types": "./diary/node/index.d.ts",
-			"import": "./diary/node/index.mjs",
-			"require": "./diary/node/index.js"
-		},
-		"./json": {
-			"types": "./json/index.d.ts",
-			"import": "./json/index.mjs",
-			"require": "./json/index.js"
-		},
-		"./utils": {
-			"types": "./utils/index.d.ts",
-			"import": "./utils/index.mjs",
-			"require": "./utils/index.js"
-		},
-		"./package.json": "./package.json"
-	},
-	"main": "diary/node/index.js",
-	"module": "diary/node/index.mjs",
-	"types": "diary/node/index.d.ts",
-	"files": [
-		"types",
-		"diary",
-		"json",
-		"utils"
-	],
-	"scripts": {
-		"bench": "cross-env DEBUG=standard ROARR_LOG=true tsm bench/index.ts",
-		"build": "bundt --minify",
-		"format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/**/*,src/*.spec}.+(ts|json|yml|md)\"",
-		"test": "uvu src \".test.ts$\" -r tsm -r test/helpers/setup.js",
-		"typecheck": "tsc --noEmit"
-	},
-	"prettier": "@marais/prettier",
-	"devDependencies": {
-		"@marais/prettier": "0.0.2",
-		"@marais/tsconfig": "0.0.4",
-		"@types/node": "20.3.2",
-		"bundt": "2.0.0-next.5",
-		"cross-env": "7.0.3",
-		"nanospy": "1.0.0",
-		"prettier": "2.8.8",
-		"tsm": "2.3.0",
-		"typescript": "5.1.3",
-		"uvu": "0.5.4"
-	},
-	"volta": {
-		"node": "18.16.1"
-	}
+  "name": "diary",
+  "version": "0.4.4",
+  "description": "Fast effective logging library for both Node, the Browser, and Workers!",
+  "keywords": [
+    "fast",
+    "logging",
+    "utility",
+    "middleware",
+    "debug",
+    "logger"
+  ],
+  "repository": "maraisr/diary",
+  "license": "MIT",
+  "author": "Marais Rossow <me@marais.dev> (https://marais.io)",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "browser": {
+        "types": "./diary/browser/index.d.ts",
+        "import": "./diary/browser/index.mjs",
+        "require": "./diary/browser/index.js"
+      },
+      "types": "./diary/node/index.d.ts",
+      "import": "./diary/node/index.mjs",
+      "require": "./diary/node/index.js"
+    },
+    "./json": {
+      "types": "./json/index.d.ts",
+      "import": "./json/index.mjs",
+      "require": "./json/index.js"
+    },
+    "./utils": {
+      "types": "./utils/index.d.ts",
+      "import": "./utils/index.mjs",
+      "require": "./utils/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "diary/node/index.js",
+  "module": "diary/node/index.mjs",
+  "types": "diary/node/index.d.ts",
+  "files": [
+    "types",
+    "diary",
+    "json",
+    "utils"
+  ],
+  "scripts": {
+    "bench": "cross-env DEBUG=standard ROARR_LOG=true tsm bench/index.ts",
+    "build": "bundt --minify",
+    "format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/**/*,src/*.spec}.+(ts|json|yml|md)\"",
+    "test": "uvu src \".test.ts$\" -r tsm -r test/helpers/setup.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "prettier": "@marais/prettier",
+  "devDependencies": {
+    "@marais/prettier": "0.0.4",
+    "@marais/tsconfig": "0.0.4",
+    "@types/node": "20.3.2",
+    "bundt": "2.0.0-next.5",
+    "cross-env": "7.0.3",
+    "nanospy": "1.0.0",
+    "prettier": "2.8.8",
+    "tsm": "2.3.0",
+    "typescript": "5.1.3",
+    "uvu": "0.5.4"
+  },
+  "volta": {
+    "node": "18.16.1"
+  }
 }

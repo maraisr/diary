@@ -6,8 +6,8 @@ settings:
 
 devDependencies:
   '@marais/prettier':
-    specifier: 0.0.2
-    version: 0.0.2
+    specifier: 0.0.4
+    version: 0.0.4
   '@marais/tsconfig':
     specifier: 0.0.4
     version: 0.0.4
@@ -106,8 +106,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@marais/prettier@0.0.2:
-    resolution: {integrity: sha512-gvPOevtXqyf/YYrneZghtNBtMGrB855EOSeXxgd+tdnpNT0Q+9QaooJHMx2SPrtSUx1tMJXrjW0XB1eiM4aBUA==}
+  /@marais/prettier@0.0.4:
+    resolution: {integrity: sha512-fcJgHALkAkmOyMEioqMaikXlUQLy9jj+SZjlI2AD9V0vEO1EjR3ZI5vz3y6A0Bz/PgskbyM9+F/A44850UWrhQ==}
     dev: true
 
   /@marais/tsconfig@0.0.4:

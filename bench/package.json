@@ -1,11 +1,11 @@
 {
-	"private": true,
-	"type": "modue",
-	"dependencies": {
-		"@graphile/logger": "0.2.0",
-		"@marais/bench": "0.0.6",
-		"bunyan": "1.8.15",
-		"debug": "4.3.4",
-		"pino": "8.14.1"
-	}
+  "private": true,
+  "type": "modue",
+  "dependencies": {
+    "@graphile/logger": "0.2.0",
+    "@marais/bench": "0.0.6",
+    "bunyan": "1.8.15",
+    "debug": "4.3.4",
+    "pino": "8.14.1"
+  }
 }
