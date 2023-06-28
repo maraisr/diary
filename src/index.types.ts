@@ -7,6 +7,8 @@ import {
 	enable,
 } from 'diary';
 
+declare function assert<T>(thing: T): void;
+
 let scope = diary('name');
 enable('*');
 
