@@ -1,18 +1,39 @@
 <div align="center">
-	<h1><img src="./shots/logo.png" alt="diary"/></h1>
-	<p align="center"><code>npm add diary</code> makes logging simple</p>
-	<hr />
-	<span>
-		<a href="https://github.com/maraisr/diary/actions/workflows/ci.yml">
-			<img src="https://github.com/maraisr/diary/actions/workflows/ci.yml/badge.svg"/>
-		</a>
-		<a href="https://npm-stat.com/charts.html?package=diary">
-			<img src="https://badgen.net/npm/dm/diary" alt="downloads"/>
-		</a>
-		<a href="https://bundlephobia.com/result?p=diary">
-			<img src="https://badgen.net/bundlephobia/minzip/diary" alt="size"/>
-		</a>
-	</span>
+
+<samp>
+
+# ![diary](./shots/logo.png)
+
+</samp>
+
+</div>
+
+<div align="left">
+
+**Dear diary, you make my logging so easy**
+
+<a href="https://npm-stat.com/charts.html?package=diary">
+  <img src="https://badgen.net/npm/dm/diary?color=black&label=npm%20downloads" alt="js downloads">
+</a>
+<a href="https://unpkg.com/diary/index.mjs">
+  <img src="https://img.badgesize.io/https://unpkg.com/diary/index.mjs?compression=gzip&label=gzip&color=black" alt="gzip size" />
+</a>
+<a href="https://unpkg.com/diary/index.mjs">
+  <img src="https://img.badgesize.io/https://unpkg.com/diary/index.mjs?compression=brotli&label=brotli&color=black" alt="brotli size" />
+</a>
+
+<br>
+<br>
+
+<sup>
+
+This is free to use software, but if you do like it, consisder supporting me ❤️
+
+[![sponsor me](https://badgen.net/badge/icon/sponsor?icon=github&label&color=gray)](https://github.com/sponsors/maraisr)
+[![buy me a coffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label&color=gray)](https://www.buymeacoffee.com/marais)
+
+</sup>
+
 </div>
 
 ## ⚡ Features
