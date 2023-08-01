@@ -13,7 +13,7 @@ node_modules
 /.vscode
 
 # Code
-/types
-/diary
-/json
-/utils
+/node.*
+/browser.*
+/json.*
+/utils.*

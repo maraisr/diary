@@ -17,34 +17,34 @@
   "exports": {
     ".": {
       "browser": {
-        "types": "./diary/browser/index.d.ts",
-        "import": "./diary/browser/index.mjs",
-        "require": "./diary/browser/index.js"
+        "types": "./browser.d.ts",
+        "import": "./browser.mjs",
+        "require": "./browser.js"
       },
-      "types": "./diary/node/index.d.ts",
-      "import": "./diary/node/index.mjs",
-      "require": "./diary/node/index.js"
+      "types": "./node.d.ts",
+      "import": "./node.mjs",
+      "require": "./node.js"
     },
     "./json": {
-      "types": "./json/index.d.ts",
-      "import": "./json/index.mjs",
-      "require": "./json/index.js"
+      "types": "./json.d.ts",
+      "import": "./json.mjs",
+      "require": "./json.js"
     },
     "./utils": {
-      "types": "./utils/index.d.ts",
-      "import": "./utils/index.mjs",
-      "require": "./utils/index.js"
+      "types": "./utils.d.ts",
+      "import": "./utils.mjs",
+      "require": "./utils.js"
     },
     "./package.json": "./package.json"
   },
-  "main": "diary/node/index.js",
-  "module": "diary/node/index.mjs",
-  "types": "diary/node/index.d.ts",
+  "main": "node.js",
+  "module": "node.mjs",
+  "types": "node.d.ts",
   "files": [
-    "types",
-    "diary",
-    "json",
-    "utils"
+    "browser.*",
+    "node.*",
+    "json.*",
+    "utils.*"
   ],
   "scripts": {
     "bench": "cross-env DEBUG=standard ROARR_LOG=true tsm bench/index.ts",
