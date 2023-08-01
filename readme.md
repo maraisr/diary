@@ -16,10 +16,10 @@
   <img src="https://badgen.net/npm/dm/diary?color=black&label=npm%20downloads" alt="js downloads">
 </a>
 <a href="https://unpkg.com/diary/index.mjs">
-  <img src="https://img.badgesize.io/https://unpkg.com/diary/diary/browser/index.mjs?compression=gzip&label=gzip&color=black" alt="gzip size" />
+  <img src="https://img.badgesize.io/https://unpkg.com/diary/browser.mjs?compression=gzip&label=gzip&color=black" alt="gzip size" />
 </a>
 <a href="https://unpkg.com/diary/index.mjs">
-  <img src="https://img.badgesize.io/https://unpkg.com/diary/diary/browser/index.mjs?compression=brotli&label=brotli&color=black" alt="brotli size" />
+  <img src="https://img.badgesize.io/https://unpkg.com/diary/browser.mjs?compression=brotli&label=brotli&color=black" alt="brotli size" />
 </a>
 
 <br>
