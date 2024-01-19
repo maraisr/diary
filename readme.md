@@ -18,7 +18,7 @@
 <a href="https://licenses.dev/npm/diary">
   <img src="https://licenses.dev/b/npm/diary?style=dark" alt="licenses" />
 </a>
-<a href="https://unpkg.com/diary/index.mjs">
+<a href="https://unpkg.com/diary/">
   <img src="https://img.badgesize.io/https://unpkg.com/diary/browser.mjs?compression=gzip&label=gzip&color=black" alt="gzip size" />
 </a>
 <a href="https://unpkg.com/diary/index.mjs">
