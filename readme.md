@@ -21,7 +21,7 @@
 <a href="https://unpkg.com/diary/">
   <img src="https://img.badgesize.io/https://unpkg.com/diary/browser.mjs?compression=gzip&label=gzip&color=black" alt="gzip size" />
 </a>
-<a href="https://unpkg.com/diary/index.mjs">
+<a href="https://unpkg.com/diary/">
   <img src="https://img.badgesize.io/https://unpkg.com/diary/browser.mjs?compression=brotli&label=brotli&color=black" alt="brotli size" />
 </a>
 
