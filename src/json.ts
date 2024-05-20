@@ -1,5 +1,5 @@
-import type { Reporter } from 'diary';
-import { sprintf } from 'diary/utils';
+import type { Reporter } from './logger';
+import { sprintf } from './utils';
 
 export const reporter: Reporter = ({ name, level, messages, ...rest }) => {
 	if (typeof messages[0] === 'object') {

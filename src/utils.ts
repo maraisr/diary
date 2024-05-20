@@ -1,4 +1,4 @@
-import type { LogLevels } from 'diary';
+import type { LogLevels } from './logger';
 
 export const sprintf = (message: string, ...extra: unknown[]) =>
 	message.replace(/(\s+)(%[Oodifs](?=[^a-z0-9A-Z]|$))/g, (_, ws, pattern) => {
@@ -12,6 +12,19 @@ export const sprintf = (message: string, ...extra: unknown[]) =>
 
 const LEVELS: Record<LogLevels, number> = { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, log: 10 } as const;
 
+/**
+ * Returns if a log level is than its comparitor.
+ *
+ * @example
+ *
+ * ```js
+ * compare("error", "fatal") === -1;
+ * // Thus error is "less-than" fatal.
+ * ```
+ *
+ * @param input the level youre trying to test
+ * @param target the level youre wanting to compare too
+ */
 export const compare = (log_level: LogLevels, input: LogLevels) => {
 	if (!(input in LEVELS) || !(log_level in LEVELS)) return 0;
 

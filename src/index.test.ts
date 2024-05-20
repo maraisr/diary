@@ -1,163 +1,161 @@
+import {suite, test} from 'uvu';
 import * as assert from 'uvu/assert';
-import * as diary from '.';
-import { enable } from '.';
-import { describe } from '../test/helpers';
 import { restoreAll, spy, spyOn } from 'nanospy';
-import type { Reporter } from 'diary';
+
+import * as diary from  './logger'
+import type {Reporter} from './logger'
+
+import * as GENERIC from './generic';
+import * as NODE from './node';
 
 const levels = ['fatal', 'error', 'warn', 'debug', 'info', 'log'] as const;
 
-describe('api', (it) => {
-	it.after.each(() => {
-		restoreAll();
-	});
+function before() {
+	diary.enable('*');
+	restoreAll();
+}
 
-	it('exports', () => {
+test.before.each(before);
+
+Object.entries({ generic: GENERIC, node: NODE }).forEach(([name, mod]) => {
+	const s = suite(`mod :: ${name}`);
+	s.before.each(before);
+
+	s('exports', () => {
 		[...levels, 'diary'].forEach((verb) => {
 			assert.type(
 				// @ts-ignore
-				diary[verb],
+				mod[verb],
 				'function',
 				`Expected diary to have #${verb} function`,
 			);
 		});
 	});
 
-	it('default diary should not be named', () => {
-		const log_output = spyOn(console, 'info', () => {});
-
-		diary.info('info');
-		assert.equal(log_output.calls[0].join(''), 'ℹ info  info');
-		diary.diary('named').info('info');
-		assert.equal(log_output.calls[1].join(''), 'ℹ info  [named] info');
-	});
-
-	it('#error persist', () => {
-		const reporter = spy<Reporter>();
-		const scope = diary.diary('error', reporter);
-
-		scope.error(new Error('some error'));
-
-		assert.equal(reporter.callCount, 1);
-		assert.equal(reporter.calls[0][0].messages[0].message, 'some error');
-		assert.instance(reporter.calls[0][0].messages[0], Error);
-	});
-
-	it('should allow object logging', () => {
-		const log_output = spyOn(console, 'info', () => {});
-
-		diary.info('info');
-		assert.equal(log_output.callCount, 1);
-		assert.equal(log_output.calls[0][0], 'ℹ info  info');
-		diary.info({ foo: 'bar' });
-
-		assert.equal(log_output.calls[1][0], "ℹ info  { foo: 'bar' }");
-	});
+	s.run();
 });
 
-describe('allows', (it) => {
-	it('should only allow some scopes', () => {
-		const reporter = spy<Reporter>();
-		const scopeA = diary.diary('scope:a', reporter);
-		const scopeB = diary.diary('scope:b', reporter);
+test('should allow object logging', () => {
+	const reporter = spy<Reporter>();
+	const scope = diary.diary('error', reporter);
 
-		enable('scope:a');
+	scope.info('info');
+	assert.equal(reporter.callCount, 1);
+	assert.equal(reporter.calls[0][0], 'ℹ info  info');
+	scope.info({ foo: 'bar' });
 
-		scopeA.info('info a');
-		scopeB.info('info b');
-		scopeB.info('info b');
-		scopeA.info('info a');
-
-		assert.equal(
-			reporter.calls.flatMap((i) => i[0].messages),
-			['info a', 'info a'],
-		);
-	});
-
-	it('should allow nested scopes', () => {
-		const reporter = spy<Reporter>();
-		const scopeA = diary.diary('scope:a', reporter);
-		const scopeB = diary.diary('scope:b', reporter);
-
-		enable('scope:*');
-
-		scopeA.info('info a');
-		scopeB.info('info b');
-
-		assert.equal(
-			reporter.calls.flatMap((i) => i[0].messages),
-			['info a', 'info b'],
-		);
-	});
-
-	it('should allow multiple allows per enable', () => {
-		const reporter = spy<Reporter>();
-
-		const scopeA = diary.diary('scope:a', reporter);
-		const scopeB = diary.diary('scope:b', reporter);
-
-		enable('scope:a,blah');
-
-		scopeA.info('info a');
-		scopeB.info('info b');
-
-		enable('blah,scope:a');
-
-		scopeA.info('info a');
-		scopeB.info('info b');
-		scopeB.info('info b');
-		scopeA.info('info a');
-
-		enable('foo,bar:*,scope:,scope:*');
-
-		scopeA.info('info a');
-		scopeB.info('info b');
-
-		assert.equal(
-			reporter.calls.flatMap((i) => i[0].messages),
-			['info a', 'info a', 'info a', 'info a', 'info b'],
-		);
-	});
+	assert.equal(reporter.calls[1][0], "ℹ info  { foo: 'bar' }");
 });
+
+const allows = suite('allows');
+allows.before.each(before);
+
+allows('should only allow some scopes', () => {
+	const reporter = spy<Reporter>();
+	const scopeA = diary.diary('scope:a', reporter);
+	const scopeB = diary.diary('scope:b', reporter);
+
+	diary.enable('scope:a');
+
+	scopeA.info('info a');
+	scopeB.info('info b');
+	scopeB.info('info b');
+	scopeA.info('info a');
+
+	assert.equal(
+		reporter.calls.flatMap((i) => i[0].messages),
+		['info a', 'info a'],
+	);
+});
+
+allows('should allow nested scopes', () => {
+	const reporter = spy<Reporter>();
+	const scopeA = diary.diary('scope:a', reporter);
+	const scopeB = diary.diary('scope:b', reporter);
+
+	diary.enable('scope:*');
+
+	scopeA.info('info a');
+	scopeB.info('info b');
+
+	assert.equal(
+		reporter.calls.flatMap((i) => i[0].messages),
+		['info a', 'info b'],
+	);
+});
+
+allows('should allow multiple allows per enable', () => {
+	const reporter = spy<Reporter>();
+
+	const scopeA = diary.diary('scope:a', reporter);
+	const scopeB = diary.diary('scope:b', reporter);
+
+	diary.enable('scope:a,blah');
+
+	scopeA.info('info a');
+	scopeB.info('info b');
+
+	diary.enable('blah,scope:a');
+
+	scopeA.info('info a');
+	scopeB.info('info b');
+	scopeB.info('info b');
+	scopeA.info('info a');
+
+	diary.enable('foo,bar:*,scope:,scope:*');
+
+	scopeA.info('info a');
+	scopeB.info('info b');
+
+	assert.equal(
+		reporter.calls.flatMap((i) => i[0].messages),
+		['info a', 'info a', 'info a', 'info a', 'info b'],
+	);
+});
+
+allows.run();
 
 levels.forEach((level) => {
-	describe(`level :: ${level}`, (it) => {
-		it('should log something', () => {
-			const reporter = spy<Reporter>();
-			const scope = diary.diary(level, reporter);
+	const l = suite(`level :: ${level}`);
+	l.before.each(before);
 
-			scope[level]('something');
-			scope[level]('something else');
-			scope[level]('object else', { foo: 'bar' });
-			scope[level]({ foo: 'bar' });
+	l('should log something', () => {
+		const reporter = spy<Reporter>();
+		const scope = diary.diary(level, reporter);
 
-			assert.equal(reporter.callCount, 4);
+		scope[level]('something');
+		scope[level]('something else');
+		scope[level]('object else', { foo: 'bar' });
+		scope[level]({ foo: 'bar' });
 
-			assert.equal(
-				reporter.calls.map((i) => i[0]),
-				[
-					{
-						name: level,
-						level: level,
-						messages: ['something'],
-					},
-					{
-						name: level,
-						level: level,
-						messages: ['something else'],
-					},
-					{
-						name: level,
-						level: level,
-						messages: ['object else', { foo: 'bar' }],
-					},
-					{
-						name: level,
-						level: level,
-						messages: [{ foo: 'bar' }],
-					},
-				],
-			);
-		});
+		assert.equal(reporter.callCount, 4);
+
+		assert.equal(
+			reporter.calls.map((i) => i[0]),
+			[
+				{
+					name: level,
+					level: level,
+					messages: ['something'],
+				},
+				{
+					name: level,
+					level: level,
+					messages: ['something else'],
+				},
+				{
+					name: level,
+					level: level,
+					messages: ['object else', { foo: 'bar' }],
+				},
+				{
+					name: level,
+					level: level,
+					messages: [{ foo: 'bar' }],
+				},
+			],
+		);
 	});
+
+	l.run();
 });
