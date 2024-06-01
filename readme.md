@@ -41,15 +41,17 @@ _Avaliable on [jsr](https://jsr.io/@mr/log), [NPM](https://npmjs.com/package/dia
 import { diary } from 'diary';
 import { pretty } from 'diary/output.console';
 
+let user = { name: 'marais', type: 'admin' };
+
 // 1️⃣ create a diary
 let log = diary(pretty);
 
 // 2️⃣ log something
-log('info', '{name} is now {type}', { name: 'marais', type: 'admin' });
+log('info', '{name} is now {type}', user);
 // ~> ℹ info marais is now admin
 
 // 💡 log message as completely typesafe
-log('debug', '{name} was created {at}', { name: 'marais' });
+log('debug', '{name} was created {at}', user);
 //                                ^? Error: 'at' is not defined
 ```
 
