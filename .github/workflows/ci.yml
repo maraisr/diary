@@ -2,32 +2,29 @@ name: CI
 
 on:
   push:
-    branches: [main]
-  pull_request: {}
+  workflow_call:
 
 jobs:
-  test:
-    name: Node.js v${{ matrix.node }}
+  deno:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [16, 18, 20]
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
 
-      - name: (env) setup pnpm
-        uses: pnpm/action-setup@master
-        with:
-          version: 8.6.5
+      - run: deno fmt --check
+      - run: deno lint
+      - run: deno check **/*.ts
 
-      - name: (env) setup node v${{ matrix.node }}
-        uses: actions/setup-node@main
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
-          check-latest: true
+      - name: Tests
+        run: |-
+          deno test --coverage=cov/
+          deno coverage cov/
 
-      - run: pnpm install --ignore-scripts
-      - run: pnpm run build
-      - run: pnpm run test
-      - run: pnpm run typecheck
+  npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+
+      - run: mkdir -p npm
+      - run: deno task build

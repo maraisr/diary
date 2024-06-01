@@ -1,181 +1,71 @@
+<br>
+
 <div align="center">
 
-<samp>
-
-# ![diary](./shots/logo.png)
-
-</samp>
-
-</div>
-
-<div align="left">
-
-**Dear diary, you make my logging so easy**
-
-<a href="https://npm-stat.com/charts.html?package=diary">
-  <img src="https://badgen.net/npm/dm/diary?color=black&label=npm%20downloads" alt="js downloads">
-</a>
-<a href="https://licenses.dev/npm/diary">
-  <img src="https://licenses.dev/b/npm/diary?style=dark" alt="licenses" />
-</a>
-<a href="https://unpkg.com/diary/">
-  <img src="https://img.badgesize.io/https://unpkg.com/diary/browser.mjs?compression=gzip&label=gzip&color=black" alt="gzip size" />
-</a>
-<a href="https://unpkg.com/diary/">
-  <img src="https://img.badgesize.io/https://unpkg.com/diary/browser.mjs?compression=brotli&label=brotli&color=black" alt="brotli size" />
+<a href="https://git.new/log" aria-label="diary">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/logo_dark.svg">
+        <img alt="diary logo" src=".github/logo_light.svg">
+    </picture>
 </a>
 
-<br>
+[![npm downloads](https://img.shields.io/npm/dw/diary?colorA=f6f8fa&colorB=f6f8fa&style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=diary)
+[![size](https://img.shields.io/bundlephobia/minzip/diary?colorA=f6f8fa&colorB=f6f8fa&style=flat)](https://bundlephobia.com/package/diary)
+[![licenses](https://licenses.dev/b/npm/diary?style=light)](https://licenses.dev/npm/diary)
+
 <br>
 
 <sup>
 
 This is free to use software, but if you do like it, consisder supporting me ❤️
 
-[![sponsor me](https://badgen.net/badge/icon/sponsor?icon=github&label&color=gray)](https://github.com/sponsors/maraisr)
-[![buy me a coffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label&color=gray)](https://www.buymeacoffee.com/marais)
+[![sponsor me](https://img.shields.io/badge/sponsor-f6f8fa?style=flat&logo=github&logoColor=21262d)](https://github.com/sponsors/maraisr)
+[![buy me a coffee](https://img.shields.io/badge/buy_me_a_coffee-f6f8fa?style=flat&logo=buymeacoffee&logoColor=21262d)](https://www.buymeacoffee.com/marais)
 
 </sup>
 
 </div>
 
-## ⚡ Features
-
-- No [dependencies](https://npm.anvaka.com/#/view/2d/diary)
-- Outstanding [performance](#-benchmark)
-- Support for [`debug`'s filter](https://www.npmjs.com/package/debug#wildcards)
-
 ## ⚙️ Install
 
-```sh
+```shell
 npm add diary
 ```
+
+_Avaliable on [jsr](https://jsr.io/@mr/log), [NPM](https://npmjs.com/package/diary) and
+[deno.land](https://deno.land/x/diary)_
 
 ## 🚀 Usage
 
 ```ts
-import { info, diary, enable } from 'diary';
+import { diary } from 'diary';
+import { pretty } from 'diary/output.console';
 
-// 1️⃣ Choose to enable the emission of logs, or not.
-enable('*');
+// 1️⃣ create a diary
+let log = diary(pretty);
 
 // 2️⃣ log something
-info('this important thing happened');
-// ~> ℹ info  this important thing happened
+log('info', '{name} is now {type}', { name: 'marais', type: 'admin' });
+// ~> ℹ info marais is now admin
 
-// Maybe setup a scoped logger
-const scopedDiary = diary('my-module', (event) => {
-  if (event.level === 'error') {
-    Sentry.captureException(event.error);
-  }
-});
-
-// 3️⃣ log more things
-scopedDiary.info('this other important thing happened');
-// ~> ℹ info  [my-module] this other important thing happened
-```
-
-<details><summary>Node users</summary>
-
-The `enable` function is executed for you from the `DEBUG` environment variable. And as a drop in replacement for
-`debug`.
-
-```shell
-DEBUG=client:db,server:* node example.js
+// 💡 log message as completely typesafe
+log('debug', '{name} was created {at}', { name: 'marais' });
+//                                ^? Error: 'at' is not defined
 ```
 
 </details>
 
-## 🔎 API
+:construction: Talk about structured logging
 
-### diary(name: string, onEmit?: Reporter)
+:construction: Talk about fragments vs sentences
 
-Returns: [log functions](#log-functions)
+:construction: Talk about onEmit
 
-> A default diary is exported, accessible through simply importing any [log function](#log-functions).
->
-> <details>
-> <summary>Example of default diary</summary>
->
-> ```ts
-> import { info } from 'diary';
->
-> info("i'll be logged under the default diary");
-> ```
->
-> </details>
+:construction: Show /using and /stream
 
-#### name
+:construction: Complete examples
 
-Type: `string`
-
-The name given to this _diary_—and will also be available in all logEvents.
-
-#### onEmit <small>(optional)</small>
-
-Type: `Reporter`
-
-A reporter is run on every log message (provided its [enabled](#enablequery-string)). A reporter gets given the
-`LogEvent` interface:
-
-```ts
-interface LogEvent {
-  name: string;
-  level: LogLevels;
-
-  messages: any[];
-}
-```
-
-> _Note_: you can attach any other context in middleware.
->
-> <details><summary>Example</summary>
->
-> ```ts
-> import { diary, default_reporter } from 'diary';
-> const scope = diary('scope', (event) => {
->   event.ts = new Date();
->   return default_reporter(event);
-> });
-> ```
->
-> </details>
-
-Errors (for `error` and `fatal`) there is also an `error: Error` property.
-
-### _log functions_
-
-A set of functions that map to `console.error`, `console.warn`, `console.debug`, `console.info` and `console.info`.
-Aptly named;
-
-`fatal`, `error`, `warn`, `debug`, `info`, and `log`. All of which follow the same api signature:
-
-```ts
-declare logFunction(message: object | Error | string, ...args: unknown[]): void;
-```
-
-All parameters are simply spread onto the function and reported. Node/browser's built-in formatters will format any
-objects (by default).
-
-```ts
-info('hi there'); // ℹ info  hi there
-info('hi %s', 'there'); // ℹ info  hi there
-info('hi %j', { foo: 'bar' }); // ℹ info hi { "foo": "bar" }
-info('hi %o', { foo: 'bar' }); // ℹ info hi { foo: 'bar' }
-info({ foo: 'bar' }); // ℹ info { foo: 'bar' }
-```
-
-#### diary <small>(optional)</small>
-
-Type: `Diary`
-
-The result of a calling [diary](#diary-name-string);
-
-### enable(query: string)
-
-Type: `Function`
-
-Opts certain log messages into being output. See more [here](#programmatic).
+:construction: What does production look like?
 
 ## 💨 Benchmark
 
@@ -195,14 +85,9 @@ AOT
 ✔ debug  ~ 1,287,846 ops/sec ± 0.24%
 ```
 
-> AOT: The logger is setup a head of time, and ops/sec is the result of calling the log fn. Simulates long running
-> process, with a single logger. JIT: The logger is setup right before the log fn is called per op. Simulates setting up
-> a logger per request for example.
-
-## Related
-
-- [workers-logger](https://github.com/maraisr/workers-logger) — fast and effective logging for
-  [Cloudflare Workers](https://workers.cloudflare.com/)
+> AOT: The logger is setup a head of time, and ops/sec is the result of calling the log fn.
+> Simulates long running process, with a single logger. JIT: The logger is setup right before the
+> log fn is called per op. Simulates setting up a logger per request for example.
 
 ## License
 
