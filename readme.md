@@ -9,9 +9,9 @@
     </picture>
 </a>
 
-[![npm downloads](https://img.shields.io/npm/dw/diary?colorA=f6f8fa&colorB=f6f8fa&style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=diary)
-[![size](https://img.shields.io/bundlephobia/minzip/diary?colorA=f6f8fa&colorB=f6f8fa&style=flat)](https://bundlephobia.com/package/diary)
-[![licenses](https://licenses.dev/b/npm/diary?style=light)](https://licenses.dev/npm/diary)
+[![npm downloads](https://badgen.net/npm/dw/diary?color=black&label=npm%20downloads)](https://npm-stat.com/charts.html?package=diary)
+[![size](https://badgen.net/bundlephobia/minzip/diary?color=black)](https://bundlephobia.com/package/diary)
+[![licenses](https://licenses.dev/b/npm/diary?style=dark)](https://licenses.dev/npm/diary)
 
 <br>
 
@@ -56,6 +56,8 @@ log('debug', '{name} was created {at}', user);
 ```
 
 </details>
+
+Diary is an expressive structured logging library.
 
 :construction: Talk about structured logging
 
