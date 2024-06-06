@@ -19,8 +19,8 @@
 
 This is free to use software, but if you do like it, consisder supporting me ❤️
 
-[![sponsor me](https://img.shields.io/badge/sponsor-f6f8fa?style=flat&logo=github&logoColor=21262d)](https://github.com/sponsors/maraisr)
-[![buy me a coffee](https://img.shields.io/badge/buy_me_a_coffee-f6f8fa?style=flat&logo=buymeacoffee&logoColor=21262d)](https://www.buymeacoffee.com/marais)
+[![sponsor me](https://badgen.net/badge/icon/sponsor?icon=github&label&color=grey)](https://github.com/sponsors/maraisr)
+[![buy me a coffee](https://badgen.net/badge/icon/buy%20me%20a%20coffee?icon=buymeacoffee&label&color=grey)](https://www.buymeacoffee.com/marais)
 
 </sup>
 
