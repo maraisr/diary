@@ -6,7 +6,7 @@
 	"license": "MIT",
 	"author": "Marais Rossow <me@marais.dev> (https://marais.io)",
 	"sideEffects": false,
-    "type": "module",
+	"type": "module",
 	"exports": {
 		".": {
 			"types": "./lib/mod.d.ts",
