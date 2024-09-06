@@ -1,4 +1,4 @@
-import type { Dict, Pretty, Props } from './utils.ts';
+import type { Dict, Pretty, Props } from 'diary/utils';
 
 /**
  * TODO

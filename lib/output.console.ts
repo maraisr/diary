@@ -1,5 +1,5 @@
-import type { Level } from './mod.ts';
-import { interpolate } from './utils.ts';
+import type { Level } from 'diary';
+import { interpolate } from 'diary/utils';
 
 import { blue, bold, gray, magenta, red, yellow } from 'kleur/colors';
 

@@ -1,8 +1,8 @@
 import { assertInstanceOf } from '@std/assert';
 import { assertSpyCall, spy } from '@std/testing/mock';
 
-import type { Level } from '../lib/mod.ts';
-import * as lib from '../lib/mod.ts';
+import type { Level } from 'diary';
+import * as lib from 'diary';
 
 Deno.test('api', () => {
 	assertInstanceOf(lib.diary, Function);

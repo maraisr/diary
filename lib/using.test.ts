@@ -1,7 +1,8 @@
 import { assertInstanceOf } from '@std/assert';
-import * as lib from './using.ts';
 import { assertSpyCall, spy } from '@std/testing/mock';
 import { delay } from '@std/async';
+
+import * as lib from './using.ts';
 
 Deno.test('api', () => {
 	assertInstanceOf(lib.diary, Function);

@@ -1,7 +1,8 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { delay } from '@std/async';
+
 import * as stream from './stream.ts';
-import * as lib from './mod.ts';
+import * as lib from 'diary';
 
 Deno.test('api', () => {
 	assertInstanceOf(lib.diary, Function);

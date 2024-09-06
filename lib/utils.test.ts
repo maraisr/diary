@@ -1,5 +1,6 @@
 import { assertEquals } from '@std/assert';
-import * as lib from './utils.ts';
+
+import * as lib from 'diary/utils';
 
 Deno.test('api', () => {
 	assertEquals(lib.interpolate('hello {name}', { name: 'world' }), 'hello world');

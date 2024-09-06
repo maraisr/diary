@@ -29,13 +29,11 @@ async function transform(name: string, filename: string) {
 
 	let outfile = `${outdir}/${name}.d.ts`;
 	console.log('> writing "%s" file', outfile);
-	let outsource = xform.declaration!.replaceAll(/\.ts/g, '.js');
-	await Deno.writeTextFile(outfile, outsource);
+	await Deno.writeTextFile(outfile, xform.declaration!);
 
 	outfile = `${outdir}/${name}.js`;
 	console.log('> writing "%s" file', outfile);
-	outsource = xform.sourceText.replaceAll(/\.ts/g, '.js');
-	await Deno.writeTextFile(outfile, outsource);
+	await Deno.writeTextFile(outfile, xform.sourceText);
 }
 
 if (exists(outdir)) {

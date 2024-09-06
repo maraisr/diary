@@ -1,4 +1,4 @@
-import * as lib from './mod.ts';
+import * as lib from 'diary';
 
 export interface Diary extends lib.Diary {
 	[Symbol.dispose](): void;
