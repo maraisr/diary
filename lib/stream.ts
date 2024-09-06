@@ -1,4 +1,4 @@
-import * as lib from "diary";
+import * as lib from 'diary';
 
 export function diary(
 	cb: (r: ReadableStream<lib.LogEvent>) => any,
