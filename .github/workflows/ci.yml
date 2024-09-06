@@ -2,29 +2,85 @@ name: CI
 
 on:
   push:
-  workflow_call:
+    branches: ["**"]
+    tags: ["v**"]
+
+env:
+  DENO_VERSION: 1.46
 
 jobs:
-  deno:
+  health:
+    name: Health
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
 
-      - run: deno fmt --check
       - run: deno lint
-      - run: deno check **/*.ts
+      - run: deno fmt --check
+      - run: deno check lib/*.ts
 
-      - name: Tests
-        run: |-
-          deno test --coverage=cov/
-          deno coverage cov/
+      - run: deno test --no-check --coverage
+      - run: deno coverage
 
-  npm:
+  dryrun:
+    needs: [health]
+    name: "Publish (dry run)"
+    if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
 
-      - run: mkdir -p npm
       - run: deno task build
+      - run: npm publish --dry-run
+        working-directory: npm
+      - run: deno publish --no-check --dry-run
+
+  # https://jsr.io/docs/publishing-packages#publishing-from-github-actions
+  # https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages#publishing-packages-to-the-npm-registry
+  publish:
+    needs: [health]
+    name: Publish
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+      id-token: write # -> authentication
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+
+      - run: deno task build
+
+      - name: "Publish → jsr"
+        if: ${{ !contains(github.ref, '-next.') }}
+        run: deno publish --no-check
+
+      - name: "Publish → npm"
+        if: ${{ !contains(github.ref, '-next.') }}
+        run: npm publish --provenance --access public
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: "Publish → npm (pre-release)"
+        if: ${{ contains(github.ref, '-next.') }}
+        run: npm publish --tag next --provenance --access public
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
