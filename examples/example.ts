@@ -1,6 +1,6 @@
-import { type Diary, diary, type OnEmitFn } from '../mod.ts';
-import { browser, plain, pretty } from '../output.console.ts';
-import { interpolate } from '../utils.ts';
+import { type Diary, diary, type OnEmitFn } from '../lib/mod.ts';
+import { browser, plain, pretty } from '../lib/output.console.ts';
+import { interpolate } from '../lib/utils.ts';
 
 class User {
 	id = 123;

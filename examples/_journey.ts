@@ -1,4 +1,4 @@
-import type { Diary } from '../mod.ts';
+import type { Diary } from '../lib/mod.ts';
 
 import { delay } from '@std/async';
 import { faker } from 'npm:@faker-js/faker';
