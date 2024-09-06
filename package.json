@@ -1,6 +1,6 @@
 {
 	"name": "diary",
-	"version": "0.5.0",
+	"version": "0.5.0-next.2",
 	"repository": "maraisr/diary",
 	"description": "Fast effective logging library for just about everything",
 	"license": "MIT",
@@ -9,24 +9,24 @@
 	"type": "module",
 	"exports": {
 		".": {
-			"types": "./lib/mod.d.ts",
-			"import": "./lib/mod.js"
+			"types": "./mod.d.ts",
+			"import": "./mod.js"
 		},
 		"./using": {
-			"types": "./lib/using.d.ts",
-			"import": "./lib/using.js"
+			"types": "./using.d.ts",
+			"import": "./using.js"
 		},
 		"./stream": {
-			"types": "./lib/stream.d.ts",
-			"import": "./lib/stream.js"
+			"types": "./stream.d.ts",
+			"import": "./stream.js"
 		},
 		"./output.console": {
-			"types": "./lib/output.console.d.ts",
-			"import": "./lib/output.console.js"
+			"types": "./output.console.d.ts",
+			"import": "./output.console.js"
 		},
 		"./utils": {
-			"types": "./lib/utils.d.ts",
-			"import": "./lib/utils.js"
+			"types": "./utils.d.ts",
+			"import": "./utils.js"
 		},
 		"./package.json": "./package.json"
 	},
