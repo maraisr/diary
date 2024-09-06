@@ -14,6 +14,7 @@
 [![licenses](https://licenses.dev/b/npm/diary?style=dark)](https://licenses.dev/npm/diary)
 
 <br>
+<br>
 
 <sup>
 
@@ -28,12 +29,8 @@ This is free to use software, but if you do like it, consisder supporting me ❤
 
 ## ⚙️ Install
 
-```shell
-npm add diary
-```
-
-_Avaliable on [jsr](https://jsr.io/@mr/log), [NPM](https://npmjs.com/package/diary) and
-[deno.land](https://deno.land/x/diary)_
+- **npm** — available as [`diary`](https://www.npmjs.com/package/diary)
+- **JSR** — available as [`@mr/diary`](https://jsr.io/@mr/diary)
 
 ## 🚀 Usage
 
@@ -73,25 +70,7 @@ Diary is an expressive structured logging library.
 
 ## 💨 Benchmark
 
-> via the [`/bench`](/bench) directory with Node v20.2.0
-
-```
-JIT
-✔ diary  ~ 1,434,414 ops/sec ± 0.16%
-✔ pino   ~    47,264 ops/sec ± 0.02%
-✔ bunyan ~     9,644 ops/sec ± 0.01%
-✔ debug  ~   444,612 ops/sec ± 0.22%
-
-AOT
-✔ diary  ~ 1,542,796 ops/sec ± 0.29%
-✔ pino   ~   281,232 ops/sec ± 0.03%
-✔ bunyan ~   588,768 ops/sec ± 0.16%
-✔ debug  ~ 1,287,846 ops/sec ± 0.24%
-```
-
-> AOT: The logger is setup a head of time, and ops/sec is the result of calling the log fn.
-> Simulates long running process, with a single logger. JIT: The logger is setup right before the
-> log fn is called per op. Simulates setting up a logger per request for example.
+TODO
 
 ## License
 

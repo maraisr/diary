@@ -1,0 +1,36 @@
+{
+	"name": "diary",
+	"version": "0.5.0",
+	"repository": "maraisr/diary",
+	"description": "Fast effective logging library for just about everything",
+	"license": "MIT",
+	"author": "Marais Rossow <me@marais.dev> (https://marais.io)",
+	"sideEffects": false,
+    "type": "module",
+	"exports": {
+		".": {
+			"types": "./lib/mod.d.ts",
+			"import": "./lib/mod.js"
+		},
+		"./using": {
+			"types": "./lib/using.d.ts",
+			"import": "./lib/using.js"
+		},
+		"./stream": {
+			"types": "./lib/stream.d.ts",
+			"import": "./lib/stream.js"
+		},
+		"./output.console": {
+			"types": "./lib/output.console.d.ts",
+			"import": "./lib/output.console.js"
+		},
+		"./utils": {
+			"types": "./lib/utils.d.ts",
+			"import": "./lib/utils.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"dependencies": {
+		"kleur": "^4"
+	}
+}

@@ -1,83 +1,75 @@
-import { build, emptyDir } from '@deno/dnt';
+// Credit @lukeed https://github.com/lukeed/empathic/blob/main/scripts/build.ts
 
-await emptyDir('./npm');
+import oxc from 'npm:oxc-transform@^0.25';
+import { join, resolve } from '@std/path';
 
-await build({
-	entryPoints: [
-		'./lib/mod.ts',
-		{
-			name: './stream',
-			path: './lib/stream.ts',
+import denoJson from '../deno.json' with { type: 'json' };
+
+const outdir = resolve('npm');
+
+let Inputs;
+if (typeof denoJson.exports === 'string') Inputs = { '.': denoJson.exports };
+else Inputs = denoJson.exports;
+
+async function transform(name: string, filename: string) {
+	if (name === '.') name = 'mod';
+	name = name.replace(/^\.\//, '');
+
+	let entry = resolve(filename);
+	let source = await Deno.readTextFile(entry);
+
+	let xform = oxc.transform(entry, source, {
+		typescript: {
+			onlyRemoveTypeImports: true,
+			declaration: true,
 		},
-		{
-			name: './using',
-			path: './lib/using.ts',
-		},
-		{
-			name: './output.console',
-			path: './lib/output.console.ts',
-		},
-		{
-			name: './utils',
-			path: './lib/utils.ts',
-		},
-	],
-	outDir: './npm',
-	shims: {
-		deno: 'dev',
-	},
+	});
 
-	esModule: true,
-	scriptModule: 'cjs',
+	if (xform.errors.length > 0) bail('transform', xform.errors);
 
-	declaration: 'inline',
-	declarationMap: false,
+	let outfile = `${outdir}/${name}.d.ts`;
+	console.log('> writing "%s" file', outfile);
+	let outsource = xform.declaration!.replaceAll(/\.ts/g, '.js');
+	await Deno.writeTextFile(outfile, outsource);
 
-	typeCheck: 'both',
-	skipSourceOutput: true,
-	test: true,
+	outfile = `${outdir}/${name}.js`;
+	console.log('> writing "%s" file', outfile);
+	outsource = xform.sourceText.replaceAll(/\.ts/g, '.js');
+	await Deno.writeTextFile(outfile, outsource);
+}
 
-	importMap: 'deno.json',
+if (exists(outdir)) {
+	console.log('! removing "npm" directory');
+	await Deno.remove(outdir, { recursive: true });
+}
+await Deno.mkdir(outdir);
 
-	package: {
-		name: 'diary',
-		version: Deno.args[0],
-		description: 'Fast effective logging library for just about everything.',
-		repository: 'maraisr/diary',
-		license: 'MIT',
-		author: {
-			name: 'Marais Rososuw',
-			email: 'me@marais.dev',
-			url: 'https://marais.io',
-		},
-		sideEffects: false,
-		keywords: [
-			'fast',
-			'logging',
-			'utility',
-			'middleware',
-			'debug',
-			'logger',
-		],
-	},
+for (let [name, filename] of Object.entries(Inputs)) await transform(name, filename);
 
-	compilerOptions: {
-		target: 'ES2022',
-		lib: ['ES2022', 'WebWorker'],
-	},
+await copy('package.json');
+await copy('readme.md');
+await copy('license');
 
-	filterDiagnostic(diag) {
-		let txt = diag.messageText.toString();
-		// ignore type error for missing Deno built-in information
+// ---
 
-		return (
-			!/Type 'ReadableStream<.*>' must have a/.test(txt) &&
-			!txt.includes(`Type 'Timeout' is not assignable to type 'number'.`)
-		);
-	},
+function bail(label: string, errors: string[]): never {
+	console.error('[%s] error(s)\n', label, errors.join(''));
+	Deno.exit(1);
+}
 
-	async postBuild() {
-		await Deno.copyFile('license', 'npm/license');
-		await Deno.copyFile('readme.md', 'npm/readme.md');
-	},
-});
+function exists(path: string) {
+	try {
+		Deno.statSync(path);
+		return true;
+	} catch (_) {
+		return false;
+	}
+}
+
+function copy(file: string) {
+	if (exists(file)) {
+		let outfile = join(outdir, file);
+		console.log('> writing "%s" file', outfile);
+		return Deno.copyFile(file, outfile);
+	}
+}

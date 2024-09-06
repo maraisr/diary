@@ -1,7 +1,7 @@
 import type { Level } from './mod.ts';
 import { interpolate } from './utils.ts';
 
-import { blue, bold, gray, magenta, red, yellow } from 'npm:kleur@^4/colors';
+import { blue, bold, gray, magenta, red, yellow } from 'kleur/colors';
 
 const LEVELS = {
 	log: '◆ log   ' as const,
@@ -12,7 +12,7 @@ const LEVELS = {
 	fatal: '✗ fatal ' as const,
 } as const;
 
-function log(out: string, level: Level, message: string, props = {}) {
+function log(out: string, level: Level, message: string, props = {}): void {
 	let args: unknown[] = [];
 	out += interpolate(message, props, (value) => {
 		args.push(value);
@@ -22,15 +22,15 @@ function log(out: string, level: Level, message: string, props = {}) {
 	console[level === 'fatal' ? 'error' : level](out, ...args);
 }
 
-export function browser(level: Level, message: string, props?: object | undefined) {
+export function browser(level: Level, message: string, props?: object | undefined): void {
 	log('', level, message, props);
 }
 
-export function plain(level: Level, message: string, props?: object | undefined) {
+export function plain(level: Level, message: string, props?: object | undefined): void {
 	log(LEVELS[level], level, message, props);
 }
 
-export function pretty(level: Level, message: string, props?: object | undefined) {
+export function pretty(level: Level, message: string, props?: object | undefined): void {
 	let l = LEVELS[level] as string;
 
 	// deno-fmt-ignore
