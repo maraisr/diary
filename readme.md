@@ -26,7 +26,7 @@
 
 <sup>
 
-This is free to use software, but if you do like it, consisder supporting me ❤️
+This is free to use software, but if you do like it, consider supporting me ❤️
 
 [![sponsor me](https://badgen.net/badge/icon/sponsor?icon=github&label&color=gray)](https://github.com/sponsors/maraisr)
 [![buy me a coffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label&color=gray)](https://www.buymeacoffee.com/marais)
@@ -73,7 +73,7 @@ scopedDiary.info('this other important thing happened');
 
 <details><summary>Node users</summary>
 
-The `enable` function is executed for you from the `DEBUG` environment variable. And as a drop in replacement for
+The `enable` function is executed for you from the `DEBUG` environment variable. And as a drop-in replacement for
 `debug`.
 
 ```shell
@@ -111,7 +111,7 @@ The name given to this _diary_—and will also be available in all logEvents.
 
 Type: `Reporter`
 
-A reporter is run on every log message (provided its [enabled](#enablequery-string)). A reporter gets given the
+A reporter is run on every log message (provided it's [enabled](#enablequery-string)). A reporter gets given the
 `LogEvent` interface:
 
 ```ts
@@ -137,14 +137,14 @@ interface LogEvent {
 >
 > </details>
 
-Errors (for `error` and `fatal`) there is also an `error: Error` property.
+For errors (`error` and `fatal`) there is also an `error: Error` property.
 
 ### _log functions_
 
 A set of functions that map to `console.error`, `console.warn`, `console.debug`, `console.info` and `console.info`.
-Aptly named;
+Aptly named:
 
-`fatal`, `error`, `warn`, `debug`, `info`, and `log`. All of which follow the same api signature:
+`fatal`, `error`, `warn`, `debug`, `info`, and `log`. All of which follow the same API signature:
 
 ```ts
 declare logFunction(message: object | Error | string, ...args: unknown[]): void;
@@ -165,7 +165,7 @@ info({ foo: 'bar' }); // ℹ info { foo: 'bar' }
 
 Type: `Diary`
 
-The result of a calling [diary](#diary-name-string);
+The result of calling [diary](#diary-name-string);
 
 ### enable(query: string)
 
@@ -191,9 +191,9 @@ AOT
 ✔ debug  ~ 1,287,846 ops/sec ± 0.24%
 ```
 
-> AOT: The logger is setup a head of time, and ops/sec is the result of calling the log fn. Simulates long running
-> process, with a single logger. JIT: The logger is setup right before the log fn is called per op. Simulates setting up
-> a logger per request for example.
+> AOT: The logger is set up ahead of time, and ops/sec is the result of calling the log fn. Simulates long-running
+> process, with a single logger. JIT: The logger is set up right before the log fn is called per op. Simulates setting
+> up a logger per request for example.
 
 ## Related
 
