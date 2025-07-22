@@ -1,10 +1,6 @@
 <div align="center">
 
-<samp>
-
-# ![diary](./shots/logo.png)
-
-</samp>
+# ![diary](.github/logo.png)
 
 </div>
 
