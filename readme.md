@@ -186,11 +186,6 @@ AOT
 > process, with a single logger. JIT: The logger is set up right before the log fn is called per op. Simulates setting
 > up a logger per request for example.
 
-## Related
-
-- [workers-logger](https://github.com/maraisr/workers-logger) — fast and effective logging for
-  [Cloudflare Workers](https://workers.cloudflare.com/)
-
 ## License
 
 MIT © [Marais Rossouw](https://marais.io)
