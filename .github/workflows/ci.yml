@@ -2,31 +2,85 @@ name: CI
 
 on:
   push:
-    branches: [main]
-  pull_request: {}
+    branches: ["**"]
+    tags: ["v**"]
+
+env:
+  DENO_VERSION: 1.46
 
 jobs:
-  test:
-    name: Node.js v${{ matrix.node }}
+  health:
+    name: Health
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [20, 22, 24]
     steps:
       - uses: actions/checkout@v4
-
-      - name: (env) setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: denoland/setup-deno@v1
         with:
-          version: 10.13.1
+          deno-version: ${{ env.DENO_VERSION }}
 
-      - name: (env) setup node v${{ matrix.node }}
-        uses: actions/setup-node@v4
+      - run: deno lint
+      - run: deno fmt --check
+      - run: deno check lib/*.ts
+
+      - run: deno test --no-check --coverage
+      - run: deno coverage
+
+  dryrun:
+    needs: [health]
+    name: "Publish (dry run)"
+    if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
         with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
+          deno-version: ${{ env.DENO_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
 
-      - run: pnpm install --ignore-scripts
-      - run: pnpm run build
-      - run: pnpm run test
-      - run: pnpm run typecheck
+      - run: deno task build
+      - run: npm publish --dry-run
+        working-directory: npm
+      - run: deno publish --no-check --dry-run
+
+  # https://jsr.io/docs/publishing-packages#publishing-from-github-actions
+  # https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages#publishing-packages-to-the-npm-registry
+  publish:
+    needs: [health]
+    name: Publish
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+      id-token: write # -> authentication
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+
+      - run: deno task build
+
+      - name: "Publish → jsr"
+        if: ${{ !contains(github.ref, '-next.') }}
+        run: deno publish --no-check
+
+      - name: "Publish → npm"
+        if: ${{ !contains(github.ref, '-next.') }}
+        run: npm publish --provenance --access public
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: "Publish → npm (pre-release)"
+        if: ${{ contains(github.ref, '-next.') }}
+        run: npm publish --tag next --provenance --access public
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

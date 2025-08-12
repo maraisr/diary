@@ -1,72 +1,36 @@
 {
-  "name": "diary",
-  "version": "0.4.5",
-  "description": "Fast effective logging library for both Node, the Browser, and Workers!",
-  "keywords": [
-    "fast",
-    "logging",
-    "utility",
-    "middleware",
-    "debug",
-    "logger"
-  ],
-  "repository": "maraisr/diary",
-  "license": "MIT",
-  "author": "Marais Rossouw <me@marais.dev> (https://marais.io)",
-  "sideEffects": false,
-  "exports": {
-    ".": {
-      "browser": {
-        "types": "./browser.d.ts",
-        "import": "./browser.mjs",
-        "require": "./browser.js"
-      },
-      "types": "./node.d.ts",
-      "import": "./node.mjs",
-      "require": "./node.js"
-    },
-    "./json": {
-      "types": "./json.d.ts",
-      "import": "./json.mjs",
-      "require": "./json.js"
-    },
-    "./utils": {
-      "types": "./utils.d.ts",
-      "import": "./utils.mjs",
-      "require": "./utils.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "main": "node.js",
-  "module": "node.mjs",
-  "types": "node.d.ts",
-  "files": [
-    "browser.*",
-    "node.*",
-    "json.*",
-    "utils.*"
-  ],
-  "scripts": {
-    "bench": "cross-env DEBUG=standard ROARR_LOG=true tsm bench/index.ts",
-    "build": "bundt --minify",
-    "format": "prettier  --write --list-different \"{*,bench/**/*,.github/**/*,test/**/*,src/*.spec}.+(ts|json|yml|md)\"",
-    "test": "uvu src \".test.ts$\" -r tsm -r test/helpers/setup.js",
-    "typecheck": "tsc --noEmit"
-  },
-  "prettier": "@marais/prettier",
-  "devDependencies": {
-    "@marais/prettier": "0.0.4",
-    "@marais/tsconfig": "0.0.4",
-    "@types/node": "24.0.15",
-    "bundt": "2.0.0-next.5",
-    "cross-env": "7.0.3",
-    "nanospy": "1.0.0",
-    "prettier": "3.6.2",
-    "tsm": "2.3.0",
-    "typescript": "5.8.3",
-    "uvu": "0.5.4"
-  },
-  "volta": {
-    "node": "24.4.1"
-  }
+	"name": "diary",
+	"version": "0.5.0-next.2",
+	"repository": "maraisr/diary",
+	"description": "Fast effective logging library for just about everything",
+	"license": "MIT",
+	"author": "Marais Rossouw <me@marais.dev> (https://marais.io)",
+	"sideEffects": false,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./mod.d.ts",
+			"import": "./mod.js"
+		},
+		"./using": {
+			"types": "./using.d.ts",
+			"import": "./using.js"
+		},
+		"./stream": {
+			"types": "./stream.d.ts",
+			"import": "./stream.js"
+		},
+		"./output.console": {
+			"types": "./output.console.d.ts",
+			"import": "./output.console.js"
+		},
+		"./utils": {
+			"types": "./utils.d.ts",
+			"import": "./utils.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"dependencies": {
+		"kleur": "^4"
+	}
 }
